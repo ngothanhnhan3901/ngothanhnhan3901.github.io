@@ -8,19 +8,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
-  --orange:  #FF6B2B;
-  --amber:   #FFB830;
-  --teal:    #00C2CB;
-  --navy:    #0F1B35;
-  --card:    #162035;
-  --card2:   #1E2D48;
-  --white:   #FFFFFF;
-  --text:    #E8F0FF;
-  --muted:   #7A9ABB;
-  --green:   #00E5A0;
-  --red:     #FF4D6D;
-  --blue:    #4D9EFF;
-  --bg:      #0C1526;
+  --orange:  #FF5A1F;
+  --amber:   #F59E0B;
+  --teal:    #0891B2;
+  --green:   #059669;
+  --red:     #E11D48;
+  --blue:    #2563EB;
+  --bg:      #F8FAFC;
+  --card:    #FFFFFF;
+  --card-border: #E2E8F0;
+  --text:    #1E293B;
+  --muted:   #64748B;
+  --canvas-bg: #F1F5F9;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,179 +27,146 @@
 body {
   background: var(--bg);
   font-family: 'Montserrat', sans-serif;
-  color: var(--white);
+  color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
 /* ── HEADER ── */
 header {
-  background: linear-gradient(90deg, #0F1B35 0%, #1A2E55 100%);
-  border-bottom: 2px solid var(--orange);
-  padding: 18px 36px;
-  display: flex; align-items: center; gap: 14px;
+  background: #FFFFFF;
+  border-bottom: 3px solid var(--orange);
+  padding: 18px 40px;
+  display: flex; align-items: center; gap: 16px;
   position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 .badge {
   background: var(--orange); color: #fff;
-  font-size: 12px; font-weight: 700;
-  padding: 5px 12px; border-radius: 6px; letter-spacing: 1px;
+  font-size: 13px; font-weight: 800;
+  padding: 6px 14px; border-radius: 8px; letter-spacing: 1px;
 }
-header h1 { font-size: 18px; font-weight: 700; color: var(--white); }
-header span { color: var(--amber); }
+header h1 { font-size: 20px; font-weight: 800; color: var(--text); }
+header span { color: var(--orange); }
 
 /* ── TABS ── */
 .tabs {
-  display: flex; background: #0C1526;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  overflow-x: auto; padding: 0 28px;
+  display: flex; background: #FFFFFF;
+  border-bottom: 2px solid #E2E8F0;
+  overflow-x: auto; padding: 0 32px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 .tab {
-  padding: 13px 20px; font-size: 12px; font-weight: 700;
-  color: var(--muted); cursor: pointer; letter-spacing: 0.3px;
-  border-bottom: 3px solid transparent;
-  transition: all .22s; white-space: nowrap; user-select: none;
+  padding: 15px 24px; font-size: 14px; font-weight: 700;
+  color: var(--muted); cursor: pointer; letter-spacing: 0.2px;
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+  transition: all .2s; white-space: nowrap; user-select: none;
 }
-.tab:hover { color: var(--white); }
-.tab.active { color: var(--amber); border-bottom-color: var(--amber); }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--orange); border-bottom-color: var(--orange); }
 
 /* ── SECTIONS ── */
-.section { display: none; padding: 32px 36px; max-width: 1080px; margin: 0 auto; }
+.section { display: none; padding: 36px 40px; max-width: 1140px; margin: 0 auto; }
 .section.active { display: block; }
 
 .sec-label {
-  font-size: 10px; font-weight: 700; color: var(--amber);
-  letter-spacing: 3px; margin-bottom: 4px;
+  font-size: 11px; font-weight: 700; color: var(--orange);
+  letter-spacing: 3px; margin-bottom: 6px;
   font-family: 'Space Mono', monospace;
 }
 .sec-heading {
-  font-size: 24px; font-weight: 900; margin-bottom: 22px;
-  color: var(--white); line-height: 1.25;
+  font-size: 28px; font-weight: 900; margin-bottom: 26px;
+  color: var(--text); line-height: 1.2;
 }
 
 /* ── EXP CARDS ── */
 .exp-card {
   background: var(--card);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px; padding: 24px;
-  margin-bottom: 20px; position: relative; overflow: hidden;
+  border: 2px solid var(--card-border);
+  border-radius: 16px; padding: 28px;
+  margin-bottom: 24px; position: relative; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
 .exp-card::before {
-  content:''; position:absolute; top:0; left:0; width:4px; height:100%;
+  content:''; position:absolute; top:0; left:0; width:5px; height:100%;
 }
 .exp-card.orange::before { background: var(--orange); }
 .exp-card.teal::before   { background: var(--teal); }
 .exp-card.amber::before  { background: var(--amber); }
 
 .exp-card h3 {
-  font-size: 14px; font-weight: 700; margin-bottom: 16px;
-  display: flex; align-items: center; gap: 9px; color: var(--white);
+  font-size: 17px; font-weight: 800; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px; color: var(--text);
 }
 .icon-badge {
-  width: 28px; height: 28px; border-radius: 7px;
+  width: 34px; height: 34px; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px; flex-shrink: 0;
+  font-size: 17px; flex-shrink: 0;
 }
-.icon-badge.orange { background: rgba(255,107,43,.22); }
-.icon-badge.teal   { background: rgba(0,194,203,.18); }
-.icon-badge.amber  { background: rgba(255,184,48,.18); }
+.icon-badge.orange { background: #FEE9E0; }
+.icon-badge.teal   { background: #E0F2FE; }
+.icon-badge.amber  { background: #FEF9E7; }
 
 canvas {
-  width: 100%; display: block; margin: 0 auto 12px;
-  background: var(--card2); border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.07);
+  width: 100%; display: block; margin: 0 auto 16px;
+  background: var(--canvas-bg); border-radius: 12px;
+  border: 2px solid #E2E8F0;
 }
 
 /* ── CONTROLS ── */
 .controls {
-  display: flex; align-items: center; gap: 10px;
-  flex-wrap: wrap; margin-top: 14px;
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap; margin-top: 18px;
 }
 .btn {
-  padding: 8px 18px; border: none; border-radius: 8px;
+  padding: 11px 22px; border: none; border-radius: 10px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 12px; font-weight: 700; cursor: pointer; transition: all .18s;
+  font-size: 14px; font-weight: 700; cursor: pointer; transition: all .18s;
 }
-.btn-fire  {
-  background: var(--orange); color: #fff;
-  box-shadow: 0 0 16px rgba(255,107,43,.45);
-}
-.btn-fire:hover  { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,107,43,.6); }
-.btn-cool  {
-  background: var(--teal); color: #0C1526;
-  box-shadow: 0 0 16px rgba(0,194,203,.35);
-}
-.btn-cool:hover  { transform: translateY(-1px); }
-.btn-reset {
-  background: rgba(255,255,255,.07); color: var(--muted);
-  border: 1px solid rgba(255,255,255,.12);
-}
-.btn-reset:hover { background: rgba(255,255,255,.12); color: var(--white); }
+.btn-fire  { background: var(--orange); color: #fff; box-shadow: 0 4px 14px rgba(255,90,31,.3); }
+.btn-fire:hover  { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,90,31,.4); }
+.btn-cool  { background: var(--teal); color: #fff; box-shadow: 0 4px 14px rgba(8,145,178,.3); }
+.btn-cool:hover  { transform: translateY(-2px); }
+.btn-reset { background: #F1F5F9; color: var(--muted); border: 2px solid #E2E8F0; }
+.btn-reset:hover { background: #E2E8F0; color: var(--text); }
 
 /* ── INFO BOX ── */
 .info-box {
-  background: rgba(255,184,48,.07);
-  border: 1px solid rgba(255,184,48,.25);
-  border-radius: 9px; padding: 12px 16px;
-  font-size: 12.5px; color: #C8A860; line-height: 1.55;
-  margin-top: 12px; transition: all .35s;
+  background: #FFFBEB; border: 2px solid #FDE68A;
+  border-radius: 10px; padding: 14px 18px;
+  font-size: 14px; color: #92400E; line-height: 1.6;
+  margin-top: 14px; transition: all .3s; font-weight: 500;
 }
-.info-box strong { color: var(--amber); }
+.info-box strong { color: var(--orange); font-weight: 800; }
 
 /* ── CHIPS ── */
-.chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.chip-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
 .chip {
-  padding: 5px 13px; border-radius: 20px;
-  font-size: 11px; font-weight: 700;
-  opacity: 0; transform: translateY(5px);
-  transition: opacity .4s, transform .4s;
+  padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;
+  opacity: 0; transform: translateY(5px); transition: opacity .4s, transform .4s;
 }
 .chip.show { opacity: 1; transform: none; }
-.chip-red   { background: rgba(255,77,109,.18); color: #FF8FA8; border: 1px solid rgba(255,77,109,.35); }
-.chip-blue  { background: rgba(77,158,255,.18); color: #90C8FF; border: 1px solid rgba(77,158,255,.3); }
-.chip-teal  { background: rgba(0,194,203,.18);  color: #5EEEDD; border: 1px solid rgba(0,194,203,.35); }
-.chip-amber { background: rgba(255,184,48,.18); color: var(--amber); border: 1px solid rgba(255,184,48,.35); }
-
-/* ── CONCLUSION ── */
-.conclusion {
-  background: linear-gradient(135deg, #1A3060 0%, #0F2048 100%);
-  border: 1px solid rgba(0,194,203,.2);
-  border-radius: 13px; padding: 22px 26px; margin-top: 6px;
-}
-.conclusion h4 {
-  font-size: 9px; letter-spacing: 3px; font-weight: 700;
-  color: var(--amber); margin-bottom: 14px;
-  font-family: 'Space Mono', monospace;
-}
-.conclusion ul { list-style: none; }
-.conclusion ul li {
-  padding: 7px 0; font-size: 12.5px; color: var(--text);
-  display: flex; gap: 10px; align-items: flex-start;
-  border-bottom: 1px solid rgba(255,255,255,.06);
-  line-height: 1.55;
-}
-.conclusion ul li:last-child { border-bottom: none; }
-.conclusion ul li::before { content:'▸'; color: var(--teal); flex-shrink: 0; margin-top: 1px; }
-.conclusion ul li strong { color: var(--amber); font-weight: 700; }
+.chip-red   { background: #FFF1F2; color: var(--red);   border: 2px solid #FECDD3; }
+.chip-blue  { background: #EFF6FF; color: var(--blue);  border: 2px solid #BFDBFE; }
+.chip-teal  { background: #F0F9FF; color: var(--teal);  border: 2px solid #BAE6FD; }
+.chip-amber { background: #FFFBEB; color: var(--amber); border: 2px solid #FDE68A; }
 
 /* ── SLIDER ── */
 input[type=range] {
-  -webkit-appearance: none; width: 130px; height: 4px;
-  border-radius: 2px; background: rgba(255,255,255,.12); outline: none;
+  -webkit-appearance: none; width: 150px; height: 5px;
+  border-radius: 3px; background: #E2E8F0; outline: none;
 }
 input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 15px; height: 15px; border-radius: 50%;
-  background: var(--amber); cursor: pointer;
-  box-shadow: 0 0 8px rgba(255,184,48,.55);
+  -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--orange); cursor: pointer; box-shadow: 0 0 6px rgba(255,90,31,.4);
 }
 .val-label {
   font-family: 'Space Mono', monospace;
-  font-size: 15px; font-weight: 700; color: var(--amber); min-width: 52px;
+  font-size: 16px; font-weight: 700; color: var(--orange); min-width: 58px;
 }
 
 /* ── LAYOUT ── */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -225,7 +191,7 @@ input[type=range]::-webkit-slider-thumb {
 
   <div class="exp-card orange">
     <h3><span class="icon-badge orange">🔬</span>Thí nghiệm: Đinh gắn sáp trên thanh đồng</h3>
-    <canvas id="cv-cond" height="240"></canvas>
+    <canvas id="cv-cond" height="320"></canvas>
     <div class="controls">
       <button class="btn btn-fire"  onclick="heatCond()">🔥 Đốt đầu A</button>
       <button class="btn btn-reset" onclick="resetCond()">↺ Đặt lại</button>
@@ -243,15 +209,6 @@ input[type=range]::-webkit-slider-thumb {
     </div>
   </div>
 
-  <div class="conclusion">
-    <h4>KẾT LUẬN – DẪN NHIỆT (trang 112 SGK)</h4>
-    <ul>
-      <li><strong>C1:</strong> Các đinh lần lượt rơi từ a→e, chứng tỏ nhiệt truyền dọc theo thanh từ đầu A đến đầu B.</li>
-      <li><strong>C2:</strong> Đinh rơi xuống vì sáp nóng chảy — nhiệt từ đầu A đã truyền đến từng điểm trên thanh đồng.</li>
-      <li><strong>C3:</strong> Thứ tự rơi: a → b → c → d → e (từ gần A đến gần B).</li>
-      <li><strong>Định nghĩa:</strong> Dẫn nhiệt là sự truyền năng lượng từ phân tử có <strong>động năng lớn</strong> sang phân tử có <strong>động năng nhỏ hơn</strong> qua va chạm trực tiếp.</li>
-    </ul>
-  </div>
 </div>
 
 <!-- ══════════ TAB 2: VẬT LIỆU ══════════ -->
@@ -261,7 +218,7 @@ input[type=range]::-webkit-slider-thumb {
 
   <div class="exp-card amber">
     <h3><span class="icon-badge amber">📊</span>So sánh tốc độ dẫn nhiệt (không khí = 1)</h3>
-    <canvas id="cv-mat" height="300"></canvas>
+    <canvas id="cv-mat" height="380"></canvas>
     <div class="controls">
       <button class="btn btn-fire"  onclick="heatMat()">🔥 Hơ nóng tất cả</button>
       <button class="btn btn-reset" onclick="resetMat()">↺ Đặt lại</button>
@@ -271,7 +228,7 @@ input[type=range]::-webkit-slider-thumb {
 
   <div class="exp-card amber">
     <h3><span class="icon-badge amber">🍳</span>Ứng dụng: Chảo kim loại + cán gỗ/nhựa</h3>
-    <canvas id="cv-pan" height="200"></canvas>
+    <canvas id="cv-pan" height="260"></canvas>
     <div class="controls">
       <button class="btn btn-fire"  onclick="heatPan()">🔥 Bật bếp</button>
       <button class="btn btn-reset" onclick="resetPan()">↺ Tắt bếp</button>
@@ -279,14 +236,6 @@ input[type=range]::-webkit-slider-thumb {
     <div class="info-box" id="pan-info">Nhấn <strong>Bật bếp</strong> — nhiệt lan qua chảo kim loại nhưng bị chặn ở cán gỗ.</div>
   </div>
 
-  <div class="conclusion">
-    <h4>KẾT LUẬN – VẬT DẪN NHIỆT & CÁCH NHIỆT (trang 113 SGK)</h4>
-    <ul>
-      <li><strong>C1 – Chảo + cán:</strong> Thân chảo kim loại dẫn nhiệt tốt → truyền nhiệt nhanh từ bếp đến thức ăn. Cán gỗ/nhựa cách nhiệt tốt → tay cầm không bị nóng.</li>
-      <li><strong>C2 – Mái ngói vs tôn:</strong> Ngói dẫn nhiệt kém hơn tôn → ngăn nhiệt tốt hơn → mát hơn mùa hè, ấm hơn mùa đông.</li>
-      <li><strong>C3 – Dụng cụ gia đình:</strong> Nồi/ấm: thân kim loại (dẫn nhiệt tốt) + tay cầm nhựa (cách nhiệt). Phích nước: lớp chân không ngăn dẫn nhiệt và đối lưu, giữ nhiệt lâu.</li>
-    </ul>
-  </div>
 </div>
 
 <!-- ══════════ TAB 3: ĐỐI LƯU CHẤT LỎNG ══════════ -->
@@ -297,7 +246,7 @@ input[type=range]::-webkit-slider-thumb {
   <div class="two-col">
     <div class="exp-card teal">
       <h3><span class="icon-badge teal">🧪</span>Ống (a) – Đun gần MIỆNG</h3>
-      <canvas id="cv-tube-a" height="300"></canvas>
+      <canvas id="cv-tube-a" height="380"></canvas>
       <div class="controls">
         <button class="btn btn-fire" onclick="heatTube('a')">🔥 Đun miệng ống</button>
         <button class="btn btn-reset" onclick="resetTube('a')">↺</button>
@@ -306,7 +255,7 @@ input[type=range]::-webkit-slider-thumb {
     </div>
     <div class="exp-card teal">
       <h3><span class="icon-badge teal">🧪</span>Ống (b) – Đun ở ĐÁY</h3>
-      <canvas id="cv-tube-b" height="300"></canvas>
+      <canvas id="cv-tube-b" height="380"></canvas>
       <div class="controls">
         <button class="btn btn-fire" onclick="heatTube('b')">🔥 Đun đáy ống</button>
         <button class="btn btn-reset" onclick="resetTube('b')">↺</button>
@@ -317,7 +266,7 @@ input[type=range]::-webkit-slider-thumb {
 
   <div class="exp-card teal" style="margin-top:4px">
     <h3><span class="icon-badge teal">🟣</span>Hình 28.3 – Thuốc tím & Dòng đối lưu</h3>
-    <canvas id="cv-conv" height="280"></canvas>
+    <canvas id="cv-conv" height="360"></canvas>
     <div class="controls">
       <button class="btn btn-fire"  onclick="startConv()">🔥 Đốt đèn cồn</button>
       <button class="btn btn-reset" onclick="resetConv()">↺ Đặt lại</button>
@@ -325,15 +274,6 @@ input[type=range]::-webkit-slider-thumb {
     <div class="info-box" id="conv-info">Nhấn <strong>Đốt đèn cồn</strong> — dòng thuốc tím nóng dâng lên, nước lạnh chìm xuống tạo vòng đối lưu.</div>
   </div>
 
-  <div class="conclusion">
-    <h4>KẾT LUẬN – ĐỐI LƯU CHẤT LỎNG (trang 113–114 SGK)</h4>
-    <ul>
-      <li><strong>Ống (a) – đun miệng:</strong> Sáp ở đáy không chảy — nước nóng nhẹ hơn, nổi lên, không xuống đáy → không có dòng đối lưu đến đáy.</li>
-      <li><strong>Ống (b) – đun đáy:</strong> Sáp ở miệng bị chảy — nước nóng ở đáy nổi lên, nước lạnh trên chìm xuống → tạo dòng đối lưu làm toàn ống nóng đều.</li>
-      <li>Hình 28.2b: nhiệt truyền theo cả <strong>đối lưu và dẫn nhiệt</strong> → sáp ở miệng nhanh chóng đạt nhiệt độ nóng chảy.</li>
-      <li><strong>Định nghĩa:</strong> Đối lưu là sự truyền nhiệt bằng các dòng chất lỏng hoặc chất khí — là hình thức truyền nhiệt chủ yếu của <strong>chất lỏng và chất khí</strong>.</li>
-    </ul>
-  </div>
 </div>
 
 <!-- ══════════ TAB 4: ĐỐI LƯU CHẤT KHÍ ══════════ -->
@@ -343,7 +283,7 @@ input[type=range]::-webkit-slider-thumb {
 
   <div class="exp-card teal">
     <h3><span class="icon-badge teal">🕯️</span>Hình 28.4 – Cánh quạt quay khi đốt nến</h3>
-    <canvas id="cv-fan" height="320"></canvas>
+    <canvas id="cv-fan" height="420"></canvas>
     <div class="controls">
       <button class="btn btn-fire"  onclick="lightCandles()">🕯️ Đốt nến</button>
       <button class="btn btn-reset" onclick="resetFan()">↺ Tắt nến</button>
@@ -353,7 +293,7 @@ input[type=range]::-webkit-slider-thumb {
 
   <div class="exp-card teal">
     <h3><span class="icon-badge teal">🌊</span>Gió biển — Đối lưu tự nhiên</h3>
-    <canvas id="cv-wind" height="240"></canvas>
+    <canvas id="cv-wind" height="320"></canvas>
     <div class="controls">
       <button class="btn btn-fire"  onclick="startWind('day')">☀️ Ban ngày</button>
       <button class="btn btn-cool"  onclick="startWind('night')">🌙 Ban đêm</button>
@@ -362,14 +302,6 @@ input[type=range]::-webkit-slider-thumb {
     <div class="info-box" id="wind-info">Chọn <strong>Ban ngày</strong> hoặc <strong>Ban đêm</strong> để xem chiều gió thay đổi.</div>
   </div>
 
-  <div class="conclusion">
-    <h4>KẾT LUẬN – ĐỐI LƯU CHẤT KHÍ (trang 114 SGK)</h4>
-    <ul>
-      <li><strong>C1 – Cánh quạt (Hình 28.4):</strong> Không khí quanh ngọn nến nóng lên, nở ra, nhẹ đi, bay lên trên. Không khí lạnh phía trên nặng hơn chìm xuống, lại được làm nóng. Dòng đối lưu liên tục → đẩy cánh quạt quay.</li>
-      <li><strong>C2 – Ví dụ thực tế:</strong> Đun nước: nước dưới nóng nổi lên, nước trên lạnh chìm xuống → toàn ấm nóng đều. Điều hòa lắp trên cao: khí mát nặng chìm xuống → làm mát cả phòng.</li>
-      <li><strong>Lưu ý:</strong> Đối lưu xảy ra ở <strong>chất lỏng và chất khí</strong>. Chất rắn không có đối lưu.</li>
-    </ul>
-  </div>
 </div>
 
 <script>
@@ -433,13 +365,13 @@ function drawCond() {
   if (!cv) return;
   const W = cv.width = cv.offsetWidth, H = 240; cv.height = H;
   const ctx = cv.getContext('2d');
-  ctx.fillStyle = '#0F1B35'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#F1F5F9'; ctx.fillRect(0,0,W,H);
 
   const t = condState.temp;
   const perc = clamp((t-25)/75, 0, 1);
 
   // Stand left + right
-  ctx.fillStyle = '#2A4A7A';
+  ctx.fillStyle = '#94A3B8';
   ctx.fillRect(40, 90, 14, 110);
   ctx.fillRect(W-54, 90, 14, 110);
   ctx.fillRect(20, 190, 54, 10);
@@ -452,8 +384,8 @@ function drawCond() {
   const hotEnd = perc;
   grad.addColorStop(0,           `hsl(${lerp(0,40,perc)},100%,${lerp(30,65,perc)}%)`);
   grad.addColorStop(Math.min(hotEnd*0.8,0.98), `hsl(${lerp(0,40,perc*0.5)},90%,50%)`);
-  grad.addColorStop(Math.min(hotEnd+0.01,1), '#2A4A7A');
-  grad.addColorStop(1,           '#2A4A7A');
+  grad.addColorStop(Math.min(hotEnd+0.01,1), '#CBD5E1');
+  grad.addColorStop(1,           '#CBD5E1');
   ctx.fillStyle = grad;
   ctx.beginPath(); ctx.roundRect(rodX, rodY, rodW, rodH, 4); ctx.fill();
   // Shine
@@ -550,7 +482,7 @@ function drawTempBar(ctx, x, y, w, h, perc) {
   g.addColorStop(0, '#FF4020'); g.addColorStop(1, '#4488FF');
   ctx.fillStyle = g;
   ctx.fillRect(x, y+h*(1-perc), w, h*perc);
-  ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.font = '8px Space Mono'; ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(30,41,59,.4)'; ctx.font = '8px Space Mono'; ctx.textAlign = 'center';
   ctx.fillText('100°', x+w/2, y-3);
   ctx.fillText('25°', x+w/2, y+h+11);
 }
@@ -597,7 +529,7 @@ function drawMat(progress) {
   if (!cv) return;
   const W = cv.width = cv.offsetWidth, H = 300; cv.height = H;
   const ctx = cv.getContext('2d');
-  ctx.fillStyle = '#0F1B35'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#F1F5F9'; ctx.fillRect(0,0,W,H);
 
   const barH = 20, gap = 10;
   const maxVal = Math.log10(MATERIALS[MATERIALS.length-1].val + 1);
@@ -648,7 +580,7 @@ function drawMat(progress) {
   }
 
   // scale label
-  ctx.fillStyle = 'rgba(255,255,255,.2)'; ctx.font = '9px Space Mono'; ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(30,41,59,.3)'; ctx.font = '9px Space Mono'; ctx.textAlign = 'center';
   ctx.fillText('(thang logarithm)', W/2, H-8);
 }
 
@@ -676,7 +608,7 @@ function drawPan(p) {
   if (!cv) return;
   const W = cv.width = cv.offsetWidth, H = 200; cv.height = H;
   const ctx = cv.getContext('2d');
-  ctx.fillStyle = '#0F1B35'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#F1F5F9'; ctx.fillRect(0,0,W,H);
 
   const cx = W*0.42, cy = H*0.52;
 
@@ -697,9 +629,9 @@ function drawPan(p) {
   ctx.fillStyle = 'rgba(255,255,255,.15)';
   ctx.beginPath(); ctx.ellipse(cx-panR*.25, cy-panR*.25, panR*.3, panR*.15, -0.5, 0, Math.PI*2); ctx.fill();
   // Pan label
-  ctx.fillStyle = 'rgba(255,255,255,.5)'; ctx.font = '10px Space Mono,monospace'; ctx.textAlign='center';
+  ctx.fillStyle = 'rgba(30,41,59,.6)'; ctx.font = '10px Space Mono,monospace'; ctx.textAlign='center';
   ctx.fillText('CHẢO KIM LOẠI', cx, cy+4);
-  ctx.fillStyle = p>0.1 ? `rgba(255,${lerp(200,80,p)},50,.8)` : 'rgba(255,255,255,.3)';
+  ctx.fillStyle = p>0.1 ? `rgba(255,${lerp(200,80,p)},50,.8)` : 'rgba(30,41,59,.4)';
   ctx.font = 'bold 11px Space Mono'; ctx.fillText(p>0.1 ? Math.round(p*180+20)+'°C':'--', cx, cy+18);
 
   // === HANDLE ===
@@ -716,13 +648,13 @@ function drawPan(p) {
 
   // Wood/plastic part (blocks heat)
   const woodGr = ctx.createLinearGradient(metalEnd,0, hStartX+handleLen,0);
-  woodGr.addColorStop(0,'#2A4A7A'); woodGr.addColorStop(1,'#1A3060');
+  woodGr.addColorStop(0,'#92400E'); woodGr.addColorStop(1,'#78350F');
   ctx.fillStyle = woodGr;
   ctx.beginPath(); ctx.roundRect(metalEnd, hY-9, hStartX+handleLen-metalEnd, 18, 6); ctx.fill();
   ctx.fillStyle='rgba(255,255,255,.08)'; ctx.fillRect(metalEnd, hY-9, hStartX+handleLen-metalEnd, 5);
 
   // Labels
-  ctx.fillStyle='rgba(255,255,255,.4)'; ctx.font='9px Space Mono'; ctx.textAlign='center';
+  ctx.fillStyle='rgba(30,41,59,.5)'; ctx.font='9px Space Mono'; ctx.textAlign='center';
   ctx.fillText('Kim loại', (hStartX+metalEnd)/2, hY+22);
   ctx.fillText('Gỗ/Nhựa', (metalEnd+hStartX+handleLen)/2, hY+22);
   // Hot/cold dot
@@ -748,9 +680,9 @@ function drawPan(p) {
   // Legend
   const lx=W-110, ly=30;
   [[`hsl(${hue},80%,${lit}%)`,'Nóng (dẫn nhiệt)'],[woodGr,'Cách nhiệt']].forEach(([c,l],i)=>{
-    ctx.fillStyle = typeof c==='string' ? c : '#2A4A7A';
+    ctx.fillStyle = typeof c==='string' ? c : '#CBD5E1';
     ctx.fillRect(lx, ly+i*22, 14, 12);
-    ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='10px Montserrat'; ctx.textAlign='left';
+    ctx.fillStyle='rgba(30,41,59,.6)'; ctx.font='10px Montserrat'; ctx.textAlign='left';
     ctx.fillText(l, lx+18, ly+i*22+10);
   });
 }
@@ -802,7 +734,7 @@ function drawTube(id, p) {
   if (!cv) return;
   const W = cv.width = cv.offsetWidth, H = 300; cv.height = H;
   const ctx = cv.getContext('2d');
-  ctx.fillStyle = '#0C1526'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#F1F5F9'; ctx.fillRect(0,0,W,H);
 
   const tw = 44, th = 200, tx = (W-tw)/2, ty = 50;
   const isA = id==='a';
@@ -871,12 +803,12 @@ function drawTube(id, p) {
   }
 
   // Labels
-  ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='10px Montserrat, sans-serif'; ctx.textAlign='center';
+  ctx.fillStyle='rgba(30,41,59,.6)'; ctx.font='10px Montserrat, sans-serif'; ctx.textAlign='center';
   ctx.fillText('Miệng', tx+tw/2, ty-8);
   ctx.fillText('Đáy', tx+tw/2, ty+th+22);
 
   // State label
-  ctx.fillStyle = isA ? (p>0.7?'#FF8080':'rgba(255,255,255,.3)') : (p>0.7?'#80FF80':'rgba(255,255,255,.3)');
+  ctx.fillStyle = isA ? (p>0.7?'#FF8080':'rgba(30,41,59,.4)') : (p>0.7?'#80FF80':'rgba(30,41,59,.4)');
   ctx.font = 'bold 11px Space Mono'; ctx.textAlign='center';
   if (p>0.7) ctx.fillText(isA ? '❌ Không đối lưu':'✅ Có đối lưu', tx+tw/2, H-14);
 }
@@ -936,7 +868,7 @@ function drawConvMain(p) {
   if (!cv) return;
   const W = cv.width = cv.offsetWidth, H = 280; cv.height = H;
   const ctx = cv.getContext('2d');
-  ctx.fillStyle='#0C1526'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#F1F5F9'; ctx.fillRect(0,0,W,H);
 
   // Beaker
   const bx=W*0.15, by=30, bw=W*0.7, bh=H-70;
@@ -948,14 +880,14 @@ function drawConvMain(p) {
   ctx.fillRect(bx+2,by+2,bw-4,bh-2);
 
   // Glass walls
-  ctx.strokeStyle='rgba(200,230,255,.25)'; ctx.lineWidth=2;
+  ctx.strokeStyle='rgba(8,145,178,.15)'; ctx.lineWidth=2;
   ctx.strokeRect(bx,by,bw,bh);
 
   // Thuốc tím package
   if (p<0.05) {
     ctx.fillStyle='#8B008B';
     ctx.beginPath(); ctx.ellipse(bx+bw*0.35, by+bh-15, 12, 6, 0, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='9px Space Mono'; ctx.textAlign='center';
+    ctx.fillStyle='rgba(30,41,59,.6)'; ctx.font='9px Space Mono'; ctx.textAlign='center';
     ctx.fillText('Thuốc tím', bx+bw*0.35, by+bh-22);
   }
 
@@ -1003,7 +935,7 @@ function drawConvMain(p) {
       ctx.beginPath(); ctx.ellipse(fx+fi*8,fy-9+flk,7,16+flk,0,0,Math.PI*2); ctx.fill();
     }
     // Thermometer icon
-    ctx.fillStyle='rgba(255,255,255,.4)'; ctx.font='10px Space Mono'; ctx.textAlign='center';
+    ctx.fillStyle='rgba(30,41,59,.5)'; ctx.font='10px Space Mono'; ctx.textAlign='center';
     ctx.fillText('🌡️ Đèn cồn', fx, fy+22);
   }
 }
@@ -1033,7 +965,7 @@ function fanLoop() {
   if (!cv) { fanAnimId=requestAnimationFrame(fanLoop); return; }
   const W=cv.width=cv.offsetWidth, H=320; cv.height=H;
   const ctx=cv.getContext('2d');
-  ctx.fillStyle='#0C1526'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#F1F5F9'; ctx.fillRect(0,0,W,H);
 
   const cx=W/2, stemTop=70, stemBot=230;
 
@@ -1075,15 +1007,15 @@ function fanLoop() {
     ctx.restore();
   }
   // Fan hub
-  ctx.fillStyle='#1E3070'; ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#DBEAFE'; ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.fill();
   ctx.fillStyle='#7A9ABB'; ctx.beginPath(); ctx.arc(0,0,4,0,Math.PI*2); ctx.fill();
   ctx.restore();
 
   // Stem
-  ctx.fillStyle='#1E3070'; ctx.fillRect(cx-3, stemTop, 6, stemBot-stemTop);
+  ctx.fillStyle='#DBEAFE'; ctx.fillRect(cx-3, stemTop, 6, stemBot-stemTop);
 
   // Base
-  ctx.fillStyle='#1A3060'; ctx.beginPath(); ctx.roundRect(cx-50, stemBot, 100, 12, 4); ctx.fill();
+  ctx.fillStyle='#DBEAFE'; ctx.beginPath(); ctx.roundRect(cx-50, stemBot, 100, 12, 4); ctx.fill();
 
   // Candles
   const candleXs=[cx-55, cx, cx+55];
@@ -1094,7 +1026,7 @@ function fanLoop() {
     ctx.fillStyle=cg;
     ctx.fillRect(candleX-6, stemBot-50, 12, 50);
     // Wick
-    ctx.strokeStyle='#1A2A50'; ctx.lineWidth=1.5;
+    ctx.strokeStyle='#E0F2FE'; ctx.lineWidth=1.5;
     ctx.beginPath(); ctx.moveTo(candleX, stemBot-50); ctx.lineTo(candleX, stemBot-60); ctx.stroke();
     // Flame (if on)
     if (fanOn) {
@@ -1219,7 +1151,7 @@ function drawWind(p) {
   ctx.fillStyle=seaGr; ctx.fillRect(seaLine,groundY,W-seaLine,H-groundY);
 
   // Wave on sea surface
-  ctx.strokeStyle='rgba(100,180,255,.35)'; ctx.lineWidth=1.5;
+  ctx.strokeStyle='rgba(8,145,178,.4)'; ctx.lineWidth=1.5;
   for (let wx=seaLine; wx<W; wx+=22) {
     ctx.beginPath(); ctx.arc(wx, groundY, 8, Math.PI, 0); ctx.stroke();
   }
@@ -1235,7 +1167,7 @@ function drawWind(p) {
   }
 
   // Labels
-  ctx.fillStyle='rgba(255,255,255,.55)'; ctx.font='bold 12px Montserrat'; ctx.textAlign='center';
+  ctx.fillStyle='rgba(30,41,59,.7)'; ctx.font='bold 12px Montserrat'; ctx.textAlign='center';
   ctx.fillText('ĐẤT', seaLine*0.5, groundY-10);
   ctx.fillText('BIỂN', seaLine+(W-seaLine)*0.5, groundY-10);
   // Temp label
