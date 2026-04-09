@@ -1,267 +1,1231 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bài 28 – Sự Truyền Nhiệt | Pro Animation</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài 28 – Sự Truyền Nhiệt | Animation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap');
 
-        :root {
-            --orange:  #FF5A1F;
-            --amber:   #F59E0B;
-            --teal:    #0891B2;
-            --bg:      #F8FAFC;
-            --text:    #0F172A; /* Màu đen đậm mới */
-            --muted:   #475569;
-            --canvas:  #FFFFFF;
-        }
+:root {
+  --orange:  #FF5A1F;
+  --amber:   #F59E0B;
+  --teal:    #0891B2;
+  --green:   #059669;
+  --red:     #E11D48;
+  --blue:    #2563EB;
+  --bg:      #F8FAFC;
+  --card:    #FFFFFF;
+  --card-border: #E2E8F0;
+  --text:    #1E293B;
+  --muted:   #64748B;
+  --canvas-bg: #F1F5F9;
+}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); font-family: 'Montserrat', sans-serif; color: var(--text); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-        header {
-            background: #FFF; border-bottom: 3px solid var(--orange);
-            padding: 20px 40px; display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        }
-        .badge { background: var(--orange); color: #fff; padding: 5px 12px; border-radius: 6px; font-weight: 900; font-size: 14px; }
-        
-        .tabs { display: flex; background: #FFF; padding: 0 40px; border-bottom: 1px solid #E2E8F0; sticky; top: 0; z-index: 10; }
-        .tab { padding: 18px 25px; cursor: pointer; font-weight: 700; color: var(--muted); border-bottom: 3px solid transparent; transition: 0.3s; }
-        .tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+body {
+  background: var(--bg);
+  font-family: 'Montserrat', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-        .section { display: none; padding: 30px 40px; max-width: 1200px; margin: 0 auto; }
-        .section.active { display: block; }
+/* ── HEADER ── */
+header {
+  background: #FFFFFF;
+  border-bottom: 3px solid var(--orange);
+  padding: 18px 40px;
+  display: flex; align-items: center; gap: 16px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.badge {
+  background: var(--orange); color: #fff;
+  font-size: 13px; font-weight: 800;
+  padding: 6px 14px; border-radius: 8px; letter-spacing: 1px;
+}
+header h1 { font-size: 20px; font-weight: 800; color: var(--text); }
+header span { color: var(--orange); }
 
-        .exp-card { background: #FFF; border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); border: 1px solid #E2E8F0; }
-        canvas { width: 100%; background: #F1F5F9; border-radius: 12px; display: block; margin-bottom: 15px; }
+/* ── TABS ── */
+.tabs {
+  display: flex; background: #FFFFFF;
+  border-bottom: 2px solid #E2E8F0;
+  overflow-x: auto; padding: 0 32px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.tab {
+  padding: 15px 24px; font-size: 14px; font-weight: 700;
+  color: var(--muted); cursor: pointer; letter-spacing: 0.2px;
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+  transition: all .2s; white-space: nowrap; user-select: none;
+}
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--orange); border-bottom-color: var(--orange); }
 
-        .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 15px 0; }
-        .btn { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: inherit; }
-        .btn-fire { background: var(--orange); color: white; }
-        .btn-fire:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(255, 90, 31, 0.3); }
-        .btn-reset { background: #E2E8F0; color: var(--text); }
+/* ── SECTIONS ── */
+.section { display: none; padding: 36px 40px; max-width: 1140px; margin: 0 auto; }
+.section.active { display: block; }
 
-        .info-box { background: #F0F9FF; border-left: 4px solid var(--teal); padding: 15px; border-radius: 8px; font-size: 15px; line-height: 1.6; color: #1e40af; }
-    </style>
+.sec-label {
+  font-size: 11px; font-weight: 700; color: var(--orange);
+  letter-spacing: 3px; margin-bottom: 6px;
+  font-family: 'Space Mono', monospace;
+}
+.sec-heading {
+  font-size: 28px; font-weight: 900; margin-bottom: 26px;
+  color: var(--text); line-height: 1.2;
+}
+
+/* ── EXP CARDS ── */
+.exp-card {
+  background: var(--card);
+  border: 2px solid var(--card-border);
+  border-radius: 16px; padding: 28px;
+  margin-bottom: 24px; position: relative; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.exp-card::before {
+  content:''; position:absolute; top:0; left:0; width:5px; height:100%;
+}
+.exp-card.orange::before { background: var(--orange); }
+.exp-card.teal::before   { background: var(--teal); }
+.exp-card.amber::before  { background: var(--amber); }
+
+.exp-card h3 {
+  font-size: 17px; font-weight: 800; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px; color: var(--text);
+}
+.icon-badge {
+  width: 34px; height: 34px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.icon-badge.orange { background: #FEE9E0; }
+.icon-badge.teal   { background: #E0F2FE; }
+.icon-badge.amber  { background: #FEF9E7; }
+
+canvas {
+  width: 100%; display: block; margin: 0 auto 16px;
+  background: var(--canvas-bg); border-radius: 12px;
+  border: 2px solid #E2E8F0;
+}
+
+/* ── CONTROLS ── */
+.controls {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap; margin-top: 18px;
+}
+.btn {
+  padding: 11px 22px; border: none; border-radius: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer; transition: all .18s;
+}
+.btn-fire  { background: var(--orange); color: #fff; box-shadow: 0 4px 14px rgba(255,90,31,.3); }
+.btn-fire:hover  { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,90,31,.4); }
+.btn-cool  { background: var(--teal); color: #fff; box-shadow: 0 4px 14px rgba(8,145,178,.3); }
+.btn-cool:hover  { transform: translateY(-2px); }
+.btn-reset { background: #F1F5F9; color: var(--muted); border: 2px solid #E2E8F0; }
+.btn-reset:hover { background: #E2E8F0; color: var(--text); }
+
+/* ── INFO BOX ── */
+.info-box {
+  background: #FFFBEB; border: 2px solid #FDE68A;
+  border-radius: 10px; padding: 14px 18px;
+  font-size: 14px; color: #92400E; line-height: 1.6;
+  margin-top: 14px; transition: all .3s; font-weight: 500;
+}
+.info-box strong { color: var(--orange); font-weight: 800; }
+
+/* ── CHIPS ── */
+.chip-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.chip {
+  padding: 7px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;
+  opacity: 0; transform: translateY(5px); transition: opacity .4s, transform .4s;
+}
+.chip.show { opacity: 1; transform: none; }
+.chip-red   { background: #FFF1F2; color: var(--red);   border: 2px solid #FECDD3; }
+.chip-blue  { background: #EFF6FF; color: var(--blue);  border: 2px solid #BFDBFE; }
+.chip-teal  { background: #F0F9FF; color: var(--teal);  border: 2px solid #BAE6FD; }
+.chip-amber { background: #FFFBEB; color: var(--amber); border: 2px solid #FDE68A; }
+
+/* ── SLIDER ── */
+input[type=range] {
+  -webkit-appearance: none; width: 150px; height: 5px;
+  border-radius: 3px; background: #E2E8F0; outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--orange); cursor: pointer; box-shadow: 0 0 6px rgba(255,90,31,.4);
+}
+.val-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 16px; font-weight: 700; color: var(--orange); min-width: 58px;
+}
+
+/* ── LAYOUT ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+</style>
 </head>
 <body>
 
 <header>
-    <div class="badge">BÀI 28</div>
-    <h1>Sự <span>Truyền Nhiệt</span> — Lab Vật Lý 8</h1>
+  <div class="badge">BÀI 28</div>
+  <h1>Sự <span>Truyền Nhiệt</span> — Thí nghiệm Tương tác</h1>
 </header>
 
 <div class="tabs">
-    <div class="tab active" onclick="sw('cond')">🔩 Dẫn Nhiệt</div>
-    <div class="tab" onclick="sw('mat')">📊 Vật Liệu</div>
-    <div class="tab" onclick="sw('conv')">🌊 Đối Lưu</div>
+  <div class="tab active" onclick="sw('conduction')">🔩 Dẫn Nhiệt</div>
+  <div class="tab" onclick="sw('material')">📊 Vật liệu</div>
+  <div class="tab" onclick="sw('convection')">🌊 Đối Lưu Chất Lỏng</div>
+  <div class="tab" onclick="sw('convection-gas')">🌪️ Đối Lưu Chất Khí</div>
 </div>
 
-<div id="tab-cond" class="section active">
-    <div class="exp-card">
-        <h3>🔩 Thí nghiệm dẫn nhiệt trên thanh đồng</h3>
-        <canvas id="cv-cond" height="280"></canvas>
-        <div class="controls">
-            <button class="btn btn-fire" onclick="startCond()">🔥 Đốt đầu A</button>
-            <button class="btn btn-reset" onclick="resetCond()">↺ Đặt lại</button>
-            <span id="cond-temp" style="font-family: 'Space Mono'; font-weight: 700; color: var(--orange);">25°C</span>
-        </div>
-        <div class="info-box">Quan sát nhiệt lan tỏa theo gradient màu và các đinh rơi xuống khi sáp nóng chảy.</div>
+<!-- ══════════ TAB 1: DẪN NHIỆT ══════════ -->
+<div id="tab-conduction" class="section active">
+  <p class="sec-label">PHẦN I</p>
+  <h2 class="sec-heading">Dẫn Nhiệt — Thanh đồng AB (Hình 28.1)</h2>
+
+  <div class="exp-card orange">
+    <h3><span class="icon-badge orange">🔬</span>Thí nghiệm: Đinh gắn sáp trên thanh đồng</h3>
+    <canvas id="cv-cond" height="320"></canvas>
+    <div class="controls">
+      <button class="btn btn-fire"  onclick="heatCond()">🔥 Đốt đầu A</button>
+      <button class="btn btn-reset" onclick="resetCond()">↺ Đặt lại</button>
+      <span style="color:var(--muted);font-size:11px;font-weight:600">Tốc độ:</span>
+      <input type="range" min="0.3" max="3" step="0.1" value="1" id="cond-speed" oninput="condSpeed=+this.value">
+      <span class="val-label" id="cond-temp">25°C</span>
     </div>
+    <div class="info-box" id="cond-info">Nhấn <strong>🔥 Đốt đầu A</strong> — quan sát các đinh a→b→c→d→e lần lượt rơi khi sáp nóng chảy.</div>
+    <div class="chip-row">
+      <div class="chip chip-red"   id="cp-a">a rơi đầu tiên</div>
+      <div class="chip chip-amber" id="cp-b">b rơi thứ hai</div>
+      <div class="chip chip-teal"  id="cp-c">c rơi thứ ba</div>
+      <div class="chip chip-blue"  id="cp-d">d rơi thứ tư</div>
+      <div class="chip chip-red"   id="cp-e">e rơi cuối cùng</div>
+    </div>
+  </div>
+
 </div>
 
-<div id="tab-mat" class="section">
-    <div class="exp-card">
-        <h3>📊 Khả năng dẫn nhiệt (Label đã sửa màu đen)</h3>
-        <canvas id="cv-mat" height="400"></canvas>
-        <div class="controls">
-            <button class="btn btn-fire" onclick="startMat()">🔥 Kiểm tra tất cả</button>
-            <button class="btn btn-reset" onclick="resetMat()">↺ Reset</button>
-        </div>
-        <div class="info-box">Dữ liệu so sánh với không khí = 1. Kim loại dẫn nhiệt vượt trội hơn hẳn các phi kim.</div>
+<!-- ══════════ TAB 2: VẬT LIỆU ══════════ -->
+<div id="tab-material" class="section">
+  <p class="sec-label">PHẦN I – BẢNG 28.1</p>
+  <h2 class="sec-heading">Khả năng Dẫn Nhiệt của Các Vật Liệu</h2>
+
+  <div class="exp-card amber">
+    <h3><span class="icon-badge amber">📊</span>So sánh tốc độ dẫn nhiệt (không khí = 1)</h3>
+    <canvas id="cv-mat" height="380"></canvas>
+    <div class="controls">
+      <button class="btn btn-fire"  onclick="heatMat()">🔥 Hơ nóng tất cả</button>
+      <button class="btn btn-reset" onclick="resetMat()">↺ Đặt lại</button>
     </div>
+    <div class="info-box">Quan sát màu đỏ lan — <strong>Đồng</strong> nóng nhanh nhất, <strong>Len</strong> nóng chậm nhất.</div>
+  </div>
+
+  <div class="exp-card amber">
+    <h3><span class="icon-badge amber">🍳</span>Ứng dụng: Chảo kim loại + cán gỗ/nhựa</h3>
+    <canvas id="cv-pan" height="260"></canvas>
+    <div class="controls">
+      <button class="btn btn-fire"  onclick="heatPan()">🔥 Bật bếp</button>
+      <button class="btn btn-reset" onclick="resetPan()">↺ Tắt bếp</button>
+    </div>
+    <div class="info-box" id="pan-info">Nhấn <strong>Bật bếp</strong> — nhiệt lan qua chảo kim loại nhưng bị chặn ở cán gỗ.</div>
+  </div>
+
 </div>
 
-<div id="tab-conv" class="section">
-    <div class="exp-card">
-        <h3>🌊 Đối lưu trong chất lỏng (Hệ thống hạt)</h3>
-        <canvas id="cv-conv" height="350"></canvas>
-        <div class="controls">
-            <button class="btn btn-fire" onclick="startConv()">🔥 Đun nóng đáy</button>
-            <button class="btn btn-reset" onclick="resetConv()">↺ Reset</button>
-        </div>
-        <div class="info-box">Các hạt thuốc tím mô phỏng dòng nước: Nóng bay lên (màu đỏ), Lạnh chìm xuống (màu tím).</div>
+<!-- ══════════ TAB 3: ĐỐI LƯU CHẤT LỎNG ══════════ -->
+<div id="tab-convection" class="section">
+  <p class="sec-label">PHẦN II</p>
+  <h2 class="sec-heading">Đối Lưu trong Chất Lỏng (Hình 28.2 & 28.3)</h2>
+
+  <div class="two-col">
+    <div class="exp-card teal">
+      <h3><span class="icon-badge teal">🧪</span>Ống (a) – Đun gần MIỆNG</h3>
+      <canvas id="cv-tube-a" height="380"></canvas>
+      <div class="controls">
+        <button class="btn btn-fire" onclick="heatTube('a')">🔥 Đun miệng ống</button>
+        <button class="btn btn-reset" onclick="resetTube('a')">↺</button>
+      </div>
+      <div class="info-box" id="info-tube-a">Sáp ở <strong>đáy</strong>. Đun ở miệng → nước nóng nổi lên, không xuống đáy.</div>
     </div>
+    <div class="exp-card teal">
+      <h3><span class="icon-badge teal">🧪</span>Ống (b) – Đun ở ĐÁY</h3>
+      <canvas id="cv-tube-b" height="380"></canvas>
+      <div class="controls">
+        <button class="btn btn-fire" onclick="heatTube('b')">🔥 Đun đáy ống</button>
+        <button class="btn btn-reset" onclick="resetTube('b')">↺</button>
+      </div>
+      <div class="info-box" id="info-tube-b">Sáp ở <strong>miệng</strong>. Đun đáy → dòng đối lưu toàn ống.</div>
+    </div>
+  </div>
+
+  <div class="exp-card teal" style="margin-top:4px">
+    <h3><span class="icon-badge teal">🟣</span>Hình 28.3 – Thuốc tím & Dòng đối lưu</h3>
+    <canvas id="cv-conv" height="360"></canvas>
+    <div class="controls">
+      <button class="btn btn-fire"  onclick="startConv()">🔥 Đốt đèn cồn</button>
+      <button class="btn btn-reset" onclick="resetConv()">↺ Đặt lại</button>
+    </div>
+    <div class="info-box" id="conv-info">Nhấn <strong>Đốt đèn cồn</strong> — dòng thuốc tím nóng dâng lên, nước lạnh chìm xuống tạo vòng đối lưu.</div>
+  </div>
+
+</div>
+
+<!-- ══════════ TAB 4: ĐỐI LƯU CHẤT KHÍ ══════════ -->
+<div id="tab-convection-gas" class="section">
+  <p class="sec-label">PHẦN II – CHẤT KHÍ</p>
+  <h2 class="sec-heading">Đối Lưu trong Chất Khí (Hình 28.4)</h2>
+
+  <div class="exp-card teal">
+    <h3><span class="icon-badge teal">🕯️</span>Hình 28.4 – Cánh quạt quay khi đốt nến</h3>
+    <canvas id="cv-fan" height="420"></canvas>
+    <div class="controls">
+      <button class="btn btn-fire"  onclick="lightCandles()">🕯️ Đốt nến</button>
+      <button class="btn btn-reset" onclick="resetFan()">↺ Tắt nến</button>
+    </div>
+    <div class="info-box" id="fan-info">Nhấn <strong>Đốt nến</strong> — không khí nóng bay lên, không khí lạnh tràn vào đẩy cánh quạt quay.</div>
+  </div>
+
+  <div class="exp-card teal">
+    <h3><span class="icon-badge teal">🌊</span>Gió biển — Đối lưu tự nhiên</h3>
+    <canvas id="cv-wind" height="320"></canvas>
+    <div class="controls">
+      <button class="btn btn-fire"  onclick="startWind('day')">☀️ Ban ngày</button>
+      <button class="btn btn-cool"  onclick="startWind('night')">🌙 Ban đêm</button>
+      <button class="btn btn-reset" onclick="resetWind()">↺ Dừng</button>
+    </div>
+    <div class="info-box" id="wind-info">Chọn <strong>Ban ngày</strong> hoặc <strong>Ban đêm</strong> để xem chiều gió thay đổi.</div>
+  </div>
+
 </div>
 
 <script>
-// --- HELPERS ---
-const lerp = (a, b, t) => a + (b - a) * t;
-const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-
+// ═══════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════
 function sw(name) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    event.target.classList.add('active');
-    document.getElementById('tab-' + name).classList.add('active');
-    if(name === 'conv') createParticles();
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  ({ conduction: initCond, material: initMat, convection: initConv2, 'convection-gas': initGas2 })[name]?.();
 }
 
-// --- 1. DẪN NHIỆT LOGIC ---
-let condT = 25;
-let condActive = false;
-let nails = [
-    {x: 0.2, fell: false, t: 50}, {x: 0.4, fell: false, t: 65},
-    {x: 0.6, fell: false, t: 80}, {x: 0.8, fell: false, t: 95}
-];
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
-function startCond() { condActive = true; }
-function resetCond() { condActive = false; condT = 25; nails.forEach(n => n.fell = false); }
+// ═══════════════════════════════════════════════
+//  TAB 1 — DẪN NHIỆT (Thanh đồng AB + đinh sáp)
+// ═══════════════════════════════════════════════
+let condState = { temp: 25, heating: false, timer: null, nailFell: [false,false,false,false,false] };
+let condSpeed = 1;
+const NAILS = ['a','b','c','d','e'];
+const NAIL_TEMPS = [48, 62, 76, 88, 98]; // temp at which each nail falls
+
+function initCond() {
+  clearInterval(condState.timer);
+  condState = { temp:25, heating:false, timer:null, nailFell:[false,false,false,false,false] };
+  document.getElementById('cond-temp').textContent = '25°C';
+  document.getElementById('cond-info').innerHTML = 'Nhấn <strong>🔥 Đốt đầu A</strong> — quan sát các đinh a→b→c→d→e lần lượt rơi.';
+  NAILS.forEach((_,i) => document.getElementById('cp-'+NAILS[i]).classList.remove('show'));
+  drawCond();
+}
+
+function heatCond() {
+  clearInterval(condState.timer);
+  condState.heating = true;
+  document.getElementById('cond-info').innerHTML = '🔥 Đang đốt nóng đầu A... Nhiệt lan dần từ <strong>A → B</strong>!';
+  condState.timer = setInterval(() => {
+    if (condState.temp < 100) {
+      condState.temp += 0.4 * condSpeed;
+      document.getElementById('cond-temp').textContent = Math.round(condState.temp) + '°C';
+      NAIL_TEMPS.forEach((nt, i) => {
+        if (!condState.nailFell[i] && condState.temp >= nt) {
+          condState.nailFell[i] = true;
+          document.getElementById('cp-'+NAILS[i]).classList.add('show');
+          if (i === NAILS.length-1) {
+            document.getElementById('cond-info').innerHTML = '✅ Tất cả đinh đã rơi! Nhiệt truyền thành công từ <strong>A → B</strong> qua dẫn nhiệt.';
+          }
+        }
+      });
+      drawCond();
+    } else { clearInterval(condState.timer); }
+  }, 30);
+}
+
+function resetCond() { initCond(); }
 
 function drawCond() {
-    const cv = document.getElementById('cv-cond');
-    const ctx = cv.getContext('2d');
-    const W = cv.width = cv.offsetWidth;
-    const H = cv.height;
+  const cv = document.getElementById('cv-cond');
+  if (!cv) return;
+  const W = cv.width = cv.offsetWidth, H = 240; cv.height = H;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#F1F5F9'; ctx.fillRect(0,0,W,H);
 
-    if(condActive && condT < 110) condT += 0.2;
+  const t = condState.temp;
+  const perc = clamp((t-25)/75, 0, 1);
 
-    const rX = 60, rY = H/2 - 10, rW = W-120, rH = 20;
-    const p = clamp((condT-25)/80, 0, 1);
+  // Stand left + right
+  ctx.fillStyle = '#94A3B8';
+  ctx.fillRect(40, 90, 14, 110);
+  ctx.fillRect(W-54, 90, 14, 110);
+  ctx.fillRect(20, 190, 54, 10);
+  ctx.fillRect(W-74, 190, 54, 10);
 
-    // Vẽ thanh với Gradient mượt
-    let g = ctx.createLinearGradient(rX, 0, rX+rW, 0);
-    g.addColorStop(0, `hsl(${lerp(30, 0, p)}, 100%, ${lerp(60, 40, p)}%)`);
-    g.addColorStop(p, '#CBD5E1');
-    g.addColorStop(1, '#94A3B8');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.roundRect(rX, rY, rW, rH, 5); ctx.fill();
+  // === Rod (gradient hot→cold) ===
+  const rodX = 54, rodY = 105, rodW = W-108, rodH = 22;
+  const grad = ctx.createLinearGradient(rodX, 0, rodX+rodW, 0);
+  // Hot zone extends based on perc
+  const hotEnd = perc;
+  grad.addColorStop(0,           `hsl(${lerp(0,40,perc)},100%,${lerp(30,65,perc)}%)`);
+  grad.addColorStop(Math.min(hotEnd*0.8,0.98), `hsl(${lerp(0,40,perc*0.5)},90%,50%)`);
+  grad.addColorStop(Math.min(hotEnd+0.01,1), '#CBD5E1');
+  grad.addColorStop(1,           '#CBD5E1');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.roundRect(rodX, rodY, rodW, rodH, 4); ctx.fill();
+  // Shine
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.fillRect(rodX+4, rodY+3, rodW-8, 5);
 
-    // Sửa Label A B sang màu đen
-    ctx.fillStyle = '#0F172A';
-    ctx.font = 'bold 18px Montserrat';
-    ctx.fillText('A', rX - 30, rY + 16);
-    ctx.fillText('B', rX + rW + 15, rY + 16);
+  // Label A and B
+  ctx.fillStyle = perc > 0.05 ? '#FF6040' : '#7A9ABB';
+  ctx.font = 'bold 15px Montserrat, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('A', rodX-14, rodY+14);
+  ctx.fillStyle = '#7A9ABB';
+  ctx.fillText('B', rodX+rodW+14, rodY+14);
 
-    // Vẽ đinh
-    nails.forEach(n => {
-        let nx = rX + rW * n.x;
-        if(p > n.x + 0.1) n.fell = true;
-        
-        ctx.fillStyle = '#475569';
-        let ny = n.fell ? rY + 60 : rY + rH;
-        ctx.fillRect(nx, ny, 2, 20);
-        ctx.beginPath(); ctx.arc(nx+1, ny+20, 4, 0, Math.PI*2); ctx.fill();
-    });
+  // === Nails ===
+  const nailSpacing = rodW / 5;
+  NAILS.forEach((n, i) => {
+    const nx = rodX + nailSpacing * (i + 0.5);
+    const fell = condState.nailFell[i];
+    const nailReach = i / 5;
+    const isHot = perc > nailReach;
 
-    document.getElementById('cond-temp').innerText = Math.round(condT) + "°C";
-    requestAnimationFrame(drawCond);
+    // Nail body (attached or falling)
+    const nailTopY = rodY + rodH;
+    const nailLen = 26;
+    const fallOffset = fell ? 36 + (Date.now() % 1000)/1000 * 5 : 0; // slight bounce illusion
+
+    ctx.save();
+    ctx.translate(nx, nailTopY + (fell ? nailLen + fallOffset : 0));
+    if (fell) ctx.rotate(Math.PI); // flip when fell
+
+    // Wax blob
+    if (!fell) {
+      ctx.fillStyle = isHot ? `rgba(255,${lerp(200,100,perc)},50,0.9)` : '#F0E0C0';
+      ctx.beginPath(); ctx.ellipse(0, 2, 5, 4, 0, 0, Math.PI*2); ctx.fill();
+    }
+    // Nail shaft
+    ctx.strokeStyle = fell ? '#888' : (isHot ? '#FF8050' : '#CCC');
+    ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, nailLen); ctx.stroke();
+    // Nail head
+    ctx.fillStyle = fell ? '#888' : '#DDD';
+    ctx.beginPath(); ctx.ellipse(0, nailLen, 4, 2.5, 0, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    // Label
+    ctx.fillStyle = fell ? '#7ABADD' : (isHot ? '#FF8050' : '#7A9ABB');
+    ctx.font = 'bold 12px Space Mono, monospace'; ctx.textAlign = 'center';
+    ctx.fillText(n, nx, nailTopY + nailLen + (fell ? 0 : 18) + 8);
+
+    // Fell indicator
+    if (fell) {
+      ctx.fillStyle = '#FF6030';
+      ctx.font = '10px Space Mono'; ctx.textAlign = 'center';
+      ctx.fillText('✗', nx, nailTopY + nailLen + 20);
+    }
+  });
+
+  // Flame at A
+  if (condState.heating && t > 26) {
+    const fx = rodX + 8, fy = rodY;
+    const tf = Date.now()/350;
+    for (let fi = 0; fi < 5; fi++) {
+      const flicker = Math.sin(tf + fi*1.3) * 3;
+      const g2 = ctx.createRadialGradient(fx, fy-5, 0, fx, fy-20, 20);
+      g2.addColorStop(0, 'rgba(255,255,150,.95)');
+      g2.addColorStop(0.4, 'rgba(255,110,10,.8)');
+      g2.addColorStop(1, 'rgba(200,20,0,0)');
+      ctx.fillStyle = g2;
+      ctx.beginPath();
+      ctx.ellipse(fx + (fi-2)*5, fy - 10 + flicker, 6, 15+flicker, 0, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  // Heat wave visualization
+  if (perc > 0.05) {
+    const waveX = rodX + rodW * perc * 0.8;
+    ctx.strokeStyle = `rgba(255,100,0,${0.3*perc})`;
+    ctx.lineWidth = 1;
+    for (let wi = 0; wi < 3; wi++) {
+      ctx.beginPath();
+      ctx.arc(waveX - wi*14, rodY+rodH/2, 14+wi*8, -Math.PI/2, Math.PI/2);
+      ctx.stroke();
+    }
+  }
+
+  // Temp bar
+  drawTempBar(ctx, W-22, 20, 12, 160, perc);
 }
 
-// --- 2. VẬT LIỆU LOGIC ---
-const MATS = [
-    {n:'Len', v:2, c:'#D4A0D0'}, {n:'Gỗ', v:7, c:'#C08840'},
-    {n:'Nước', v:25, c:'#3B82F6'}, {n:'Thép', v:2860, c:'#94A3B8'},
-    {n:'Đồng', v:17370, c:'#F59E0B'}
+function drawTempBar(ctx, x, y, w, h, perc) {
+  ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(x, y, w, h);
+  const g = ctx.createLinearGradient(0, y, 0, y+h);
+  g.addColorStop(0, '#FF4020'); g.addColorStop(1, '#4488FF');
+  ctx.fillStyle = g;
+  ctx.fillRect(x, y+h*(1-perc), w, h*perc);
+  ctx.fillStyle = 'rgba(30,41,59,.4)'; ctx.font = '8px Space Mono'; ctx.textAlign = 'center';
+  ctx.fillText('100°', x+w/2, y-3);
+  ctx.fillText('25°', x+w/2, y+h+11);
+}
+
+// Continuous redraw for flame
+let condRaf;
+function condLoop() {
+  if (document.getElementById('tab-conduction').classList.contains('active')) drawCond();
+  condRaf = requestAnimationFrame(condLoop);
+}
+
+// ═══════════════════════════════════════════════
+//  TAB 2 — VẬT LIỆU
+// ═══════════════════════════════════════════════
+const MATERIALS = [
+  { name:'Len',       val:2,     color:'#D4A0D0' },
+  { name:'Gỗ',        val:7,     color:'#C08840' },
+  { name:'Nước',      val:25,    color:'#4090E0' },
+  { name:'Thuỷ tinh', val:44,    color:'#80C0E0' },
+  { name:'Đất',       val:65,    color:'#A06030' },
+  { name:'Thép',      val:2860,  color:'#A0B0C0' },
+  { name:'Nhôm',      val:8770,  color:'#C0D0E0' },
+  { name:'Đồng',      val:17370, color:'#E0A050' },
 ];
-let matP = 0;
-let matActive = false;
+let matProgress = 0, matAnimId = null;
 
-function startMat() { matActive = true; }
-function resetMat() { matActive = false; matP = 0; }
+function initMat() { matProgress = 0; drawMat(0); initPan(); }
 
-function drawMat() {
-    const cv = document.getElementById('cv-mat');
-    const ctx = cv.getContext('2d');
-    const W = cv.width = cv.offsetWidth;
-    const H = cv.height;
-    ctx.clearRect(0,0,W,H);
+function heatMat() {
+  cancelAnimationFrame(matAnimId);
+  const st = matProgress, startTime = performance.now();
+  function step(now) {
+    const t = Math.min((now-startTime)/2200, 1);
+    matProgress = st + (1-st)*(1-Math.pow(1-t,3));
+    drawMat(matProgress);
+    if (t < 1) matAnimId = requestAnimationFrame(step);
+  }
+  matAnimId = requestAnimationFrame(step);
+}
+function resetMat() { cancelAnimationFrame(matAnimId); matProgress=0; drawMat(0); }
 
-    if(matActive && matP < 1) matP += 0.01;
+function drawMat(progress) {
+  const cv = document.getElementById('cv-mat');
+  if (!cv) return;
+  const W = cv.width = cv.offsetWidth, H = 300; cv.height = H;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#F1F5F9'; ctx.fillRect(0,0,W,H);
 
-    MATS.forEach((m, i) => {
-        let y = 50 + i * 60;
-        let valW = (Math.log10(m.v+1) / 4.5) * (W-200);
-        
-        // Vẽ thanh vật liệu
-        ctx.fillStyle = '#E2E8F0';
-        ctx.fillRect(100, y, W-200, 25);
-        ctx.fillStyle = m.c;
-        ctx.fillRect(100, y, valW * matP, 25);
+  const barH = 20, gap = 10;
+  const maxVal = Math.log10(MATERIALS[MATERIALS.length-1].val + 1);
+  const padL = 90, padR = 100;
+  const totalH = MATERIALS.length*(barH+gap) - gap;
+  const startY = (H - totalH)/2;
 
-        // Sửa Label sang màu đen Navy đậm
-        ctx.fillStyle = '#0F172A';
-        ctx.font = 'bold 14px Montserrat';
-        ctx.textAlign = 'right';
-        ctx.fillText(m.n, 85, y + 18);
+  MATERIALS.forEach((m, i) => {
+    const y = startY + i*(barH+gap);
+    const logRatio = Math.log10(m.val+1) / maxVal;
+    const maxW = W - padL - padR;
+    const fillW = maxW * logRatio * progress;
 
-        ctx.textAlign = 'left';
-        ctx.font = 'bold 12px Space Mono';
-        ctx.fillText(m.v.toLocaleString(), 110 + (valW * matP), y + 18);
-    });
-    requestAnimationFrame(drawMat);
+    // BG
+    ctx.fillStyle = 'rgba(30,41,59,.08)';
+    ctx.beginPath(); ctx.roundRect(padL, y, maxW, barH, 4); ctx.fill();
+
+    // Fill
+    const fg = ctx.createLinearGradient(padL, 0, padL+maxW, 0);
+    fg.addColorStop(0, '#FF4020'); fg.addColorStop(0.4, m.color); fg.addColorStop(1, m.color);
+    ctx.fillStyle = fg;
+    if (fillW > 0) { ctx.beginPath(); ctx.roundRect(padL, y, fillW, barH, 4); ctx.fill(); }
+
+    // Label left
+    ctx.fillStyle = '#1E293B';   // màu tối, đọc được trên nền sáng
+    ctx.font = 'bold 12px Montserrat, sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(m.name, padL-8, y+barH/2+4);
+
+    // Value right
+    if (progress > 0.05) {
+      ctx.fillStyle = '#1E293B';
+      ctx.font = 'bold 11px Space Mono, monospace'; ctx.textAlign = 'left';
+      ctx.fillText(Math.round(m.val * progress).toLocaleString('vi'), padL+maxW+8, y+barH/2+4);
+    }
+  });
+
+  // Flame at left
+  if (progress > 0.01) {
+    const fy = startY + totalH/2;
+    const tf = Date.now()/400;
+    for (let fi = 0; fi < 4; fi++) {
+      const flk = Math.sin(tf+fi)*3;
+      const g2 = ctx.createRadialGradient(padL-2,fy,0,padL-2,fy-18,20);
+      g2.addColorStop(0,'rgba(255,255,150,.9)'); g2.addColorStop(.5,'rgba(255,100,0,.7)'); g2.addColorStop(1,'rgba(200,0,0,0)');
+      ctx.fillStyle = g2;
+      ctx.beginPath(); ctx.ellipse(padL-2+(fi-1.5)*6, fy-10+flk, 5, 14+flk, 0, 0, Math.PI*2); ctx.fill();
+    }
+  }
+
+  // scale label
+  ctx.fillStyle = 'rgba(30,41,59,.3)'; ctx.font = '9px Space Mono'; ctx.textAlign = 'center';
+  ctx.fillText('(thang logarithm)', W/2, H-8);
 }
 
-// --- 3. ĐỐI LƯU LOGIC ---
+// Pan
+let panProgress = 0, panAnimId = null;
+function initPan() { panProgress = 0; drawPan(0); }
+function heatPan() {
+  cancelAnimationFrame(panAnimId);
+  const st = panProgress, s0 = performance.now();
+  function step(now) {
+    const t = Math.min((now-s0)/2000,1), ease=1-Math.pow(1-t,3);
+    panProgress = st+(1-st)*ease;
+    drawPan(panProgress);
+    document.getElementById('pan-info').innerHTML = panProgress > 0.6
+      ? '✅ Nhiệt lan khắp chảo kim loại → <strong>thức ăn chín</strong>. Cán gỗ <strong>không nóng</strong> → cầm được an toàn!'
+      : '🔥 Nhiệt đang lan qua chảo kim loại...';
+    if (t<1) panAnimId = requestAnimationFrame(step);
+  }
+  panAnimId = requestAnimationFrame(step);
+}
+function resetPan() { cancelAnimationFrame(panAnimId); panProgress=0; drawPan(0); document.getElementById('pan-info').innerHTML='Nhấn <strong>Bật bếp</strong> — quan sát nhiệt lan qua chảo kim loại nhưng bị cản ở cán gỗ.'; }
+
+function drawPan(p) {
+  const cv = document.getElementById('cv-pan');
+  if (!cv) return;
+  const W = cv.width = cv.offsetWidth, H = 200; cv.height = H;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#F1F5F9'; ctx.fillRect(0,0,W,H);
+
+  const cx = W*0.42, cy = H*0.52;
+
+  // === PAN BODY ===
+  const panR = Math.min(W*0.22, 80);
+  // Heat color
+  const hue = lerp(30, 0, p);
+  const lit  = lerp(30, 55, p);
+  ctx.fillStyle = `hsl(${hue},80%,${lit}%)`;
+  ctx.beginPath(); ctx.ellipse(cx, cy, panR, panR*0.28, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = `hsl(${hue},70%,${lit-10}%)`;
+  ctx.beginPath(); ctx.arc(cx, cy, panR, 0, Math.PI*2); ctx.fill();
+  // Rim
+  ctx.strokeStyle = `hsl(${hue},60%,${lit+15}%)`;
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(cx, cy, panR, 0, Math.PI*2); ctx.stroke();
+  // Shine
+  ctx.fillStyle = 'rgba(255,255,255,.15)';
+  ctx.beginPath(); ctx.ellipse(cx-panR*.25, cy-panR*.25, panR*.3, panR*.15, -0.5, 0, Math.PI*2); ctx.fill();
+  // Pan label
+  ctx.fillStyle = 'rgba(30,41,59,.6)'; ctx.font = '10px Space Mono,monospace'; ctx.textAlign='center';
+  ctx.fillText('CHẢO KIM LOẠI', cx, cy+4);
+  ctx.fillStyle = p>0.1 ? `rgba(255,${lerp(200,80,p)},50,.8)` : 'rgba(30,41,59,.4)';
+  ctx.font = 'bold 11px Space Mono'; ctx.fillText(p>0.1 ? Math.round(p*180+20)+'°C':'--', cx, cy+18);
+
+  // === HANDLE ===
+  const hStartX = cx + panR - 6, hY = cy;
+  const handleLen = panR * 1.8;
+  // Metal part (conducts ~40%)
+  const metalEnd = hStartX + handleLen * 0.45;
+  const mgr = ctx.createLinearGradient(hStartX, 0, metalEnd, 0);
+  mgr.addColorStop(0, `hsl(${hue},80%,${lit}%)`);
+  mgr.addColorStop(1, `hsl(${lerp(hue,30,p*0.4)},70%,35%)`);
+  ctx.fillStyle = mgr;
+  ctx.fillRect(hStartX, hY-7, metalEnd-hStartX, 14);
+  ctx.fillStyle = 'rgba(255,255,255,.1)'; ctx.fillRect(hStartX, hY-7, metalEnd-hStartX, 4);
+
+  // Wood/plastic part (blocks heat)
+  const woodGr = ctx.createLinearGradient(metalEnd,0, hStartX+handleLen,0);
+  woodGr.addColorStop(0,'#92400E'); woodGr.addColorStop(1,'#78350F');
+  ctx.fillStyle = woodGr;
+  ctx.beginPath(); ctx.roundRect(metalEnd, hY-9, hStartX+handleLen-metalEnd, 18, 6); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.08)'; ctx.fillRect(metalEnd, hY-9, hStartX+handleLen-metalEnd, 5);
+
+  // Labels
+  ctx.fillStyle='rgba(30,41,59,.5)'; ctx.font='9px Space Mono'; ctx.textAlign='center';
+  ctx.fillText('Kim loại', (hStartX+metalEnd)/2, hY+22);
+  ctx.fillText('Gỗ/Nhựa', (metalEnd+hStartX+handleLen)/2, hY+22);
+  // Hot/cold dot
+  if (p>0.1) {
+    ctx.fillStyle=`rgba(255,${lerp(200,80,p)},50,.85)`;
+    ctx.beginPath(); ctx.arc((hStartX+metalEnd)/2, hY, 5, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(50,200,80,.85)';
+    ctx.beginPath(); ctx.arc((metalEnd+hStartX+handleLen)/2, hY, 5, 0, Math.PI*2); ctx.fill();
+  }
+
+  // Flame below pan
+  if (p>0.01) {
+    const tf = Date.now()/350;
+    for (let fi=-2; fi<=2; fi++) {
+      const flk=Math.sin(tf+fi)*3;
+      const g2=ctx.createRadialGradient(cx+fi*10,cy+panR*0.5,0,cx+fi*10,cy+panR*0.5-16,18);
+      g2.addColorStop(0,'rgba(255,255,150,.9)'); g2.addColorStop(.4,'rgba(255,100,0,.7)'); g2.addColorStop(1,'rgba(200,0,0,0)');
+      ctx.fillStyle=g2;
+      ctx.beginPath(); ctx.ellipse(cx+fi*10,cy+panR*0.5-8+flk,7,16+flk,0,0,Math.PI*2); ctx.fill();
+    }
+  }
+
+  // Legend
+  const lx=W-110, ly=30;
+  [[`hsl(${hue},80%,${lit}%)`,'Nóng (dẫn nhiệt)'],[woodGr,'Cách nhiệt']].forEach(([c,l],i)=>{
+    ctx.fillStyle = typeof c==='string' ? c : '#CBD5E1';
+    ctx.fillRect(lx, ly+i*22, 14, 12);
+    ctx.fillStyle='rgba(30,41,59,.6)'; ctx.font='10px Montserrat'; ctx.textAlign='left';
+    ctx.fillText(l, lx+18, ly+i*22+10);
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  TAB 3 — ĐỐI LƯU CHẤT LỎNG
+// ═══════════════════════════════════════════════
+
+// ── Tube A & B ──
+let tubeStates = {
+  a: { progress:0, animId:null },
+  b: { progress:0, animId:null },
+};
+
+function initConv2() {
+  ['a','b'].forEach(id => { tubeStates[id].progress=0; cancelAnimationFrame(tubeStates[id].animId); drawTube(id, 0); });
+  initConvMain();
+}
+
+function heatTube(id) {
+  const ts = tubeStates[id];
+  cancelAnimationFrame(ts.animId);
+  const st = ts.progress, s0 = performance.now();
+  function step(now) {
+    const t = Math.min((now-s0)/2500,1), ease=1-Math.pow(1-t,3);
+    ts.progress = st+(1-st)*ease; drawTube(id, ts.progress);
+    const info = document.getElementById('info-tube-'+id);
+    if (id==='a') {
+      info.innerHTML = ts.progress > 0.7
+        ? '❌ Viên sáp ở đáy <strong>không bị nóng chảy</strong> — nước nóng nổi lên, không có dòng đối lưu xuống đáy!'
+        : '🔥 Đun nóng gần miệng... nước nóng đang nổi lên...';
+    } else {
+      info.innerHTML = ts.progress > 0.7
+        ? '✅ Viên sáp ở miệng <strong>bị nóng chảy</strong> — dòng đối lưu toàn ống đã làm nóng toàn bộ nước!'
+        : '🔥 Đun đáy... dòng đối lưu đang hình thành...';
+    }
+    if (t<1) ts.animId = requestAnimationFrame(step);
+  }
+  ts.animId = requestAnimationFrame(step);
+}
+function resetTube(id) {
+  cancelAnimationFrame(tubeStates[id].animId); tubeStates[id].progress=0; drawTube(id,0);
+  const msgs = { a:'Sáp ở <strong>đáy</strong>. Đun ở miệng → nước nóng nổi lên, không xuống đáy.', b:'Sáp ở <strong>miệng</strong>. Đun đáy → dòng đối lưu toàn ống.' };
+  document.getElementById('info-tube-'+id).innerHTML = msgs[id];
+}
+
+function drawTube(id, p) {
+  const cv = document.getElementById('cv-tube-'+id);
+  if (!cv) return;
+  const W = cv.width = cv.offsetWidth, H = 300; cv.height = H;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#F1F5F9'; ctx.fillRect(0,0,W,H);
+
+  const tw = 44, th = 200, tx = (W-tw)/2, ty = 50;
+  const isA = id==='a';
+
+  // Glass tube outline
+  ctx.strokeStyle = 'rgba(200,220,255,.3)'; ctx.lineWidth = 2.5;
+  ctx.strokeRect(tx, ty, tw, th);
+
+  // Water fill (gradient hot zone)
+  const waterGr = ctx.createLinearGradient(0, ty, 0, ty+th);
+  if (isA) {
+    // Tube A: only top gets hot (miệng ở trên)
+    waterGr.addColorStop(0, `hsl(${lerp(30,210,1-p)},80%,${lerp(55,35,1-p)}%)`);
+    waterGr.addColorStop(Math.min(p*0.6+0.01,1), '#1A4080');
+    waterGr.addColorStop(1, '#0A2040');
+  } else {
+    // Tube B: whole tube heats from bottom
+    waterGr.addColorStop(0, p>0.5 ? `hsl(${lerp(210,30,p-0.5)},80%,50%)` : '#1A4080');
+    waterGr.addColorStop(1, `hsl(${lerp(210,20,p)},90%,${lerp(35,55,p)}%)`);
+  }
+  ctx.fillStyle = waterGr;
+  ctx.fillRect(tx+1, ty+1, tw-2, th-2);
+
+  // Convection arrows in tube (only tube b gets them)
+  if (!isA && p > 0.15) {
+    const arrowAlpha = Math.min((p-0.15)/0.4, 0.85);
+    // Up arrows (hot water rising)
+    ctx.strokeStyle = `rgba(255,120,50,${arrowAlpha})`;
+    ctx.lineWidth = 2; ctx.lineCap = 'round';
+    for (let ay = ty+th-30; ay > ty+10; ay -= 55) {
+      ctx.beginPath(); ctx.moveTo(tx+14, ay); ctx.lineTo(tx+14, ay-30); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(tx+9, ay-22); ctx.lineTo(tx+14, ay-30); ctx.lineTo(tx+19, ay-22); ctx.stroke();
+    }
+    // Down arrows (cold water sinking)
+    ctx.strokeStyle = `rgba(50,150,255,${arrowAlpha})`;
+    for (let ay = ty+20; ay < ty+th-10; ay += 55) {
+      ctx.beginPath(); ctx.moveTo(tx+30, ay); ctx.lineTo(tx+30, ay+30); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(tx+25, ay+22); ctx.lineTo(tx+30, ay+30); ctx.lineTo(tx+35, ay+22); ctx.stroke();
+    }
+  }
+
+  // WAX blob
+  const waxY = isA ? ty+th-12 : ty+8; // a=bottom, b=top
+  const waxMelted = p > 0.7 && !isA; // only b melts
+  ctx.fillStyle = waxMelted ? 'rgba(255,240,100,.3)' : (isA ? '#FFEE88' : '#FFEE88');
+  ctx.beginPath(); ctx.ellipse(tx+tw/2, waxY, waxMelted?18:10, 5, 0, 0, Math.PI*2); ctx.fill();
+  if (!waxMelted) {
+    ctx.fillStyle = '#FFCC00'; ctx.font = '9px Space Mono'; ctx.textAlign='center';
+    ctx.fillText('Sáp', tx+tw/2, waxY+4);
+  } else {
+    ctx.fillStyle = 'rgba(255,230,50,.6)'; ctx.font = '9px Space Mono'; ctx.textAlign='center';
+    ctx.fillText('Sáp chảy!', tx+tw/2, waxY+4);
+  }
+
+  // Flame
+  const flameY = isA ? ty+8 : ty+th+12;
+  if (p>0.02) {
+    const tf=Date.now()/350;
+    for (let fi=-1; fi<=1; fi++) {
+      const flk=Math.sin(tf+fi)*3;
+      const g2=ctx.createRadialGradient(tx+tw/2+fi*8, flameY, 0, tx+tw/2+fi*8, flameY-16, 16);
+      g2.addColorStop(0,'rgba(255,255,150,.9)'); g2.addColorStop(.5,'rgba(255,100,0,.7)'); g2.addColorStop(1,'rgba(200,0,0,0)');
+      ctx.fillStyle=g2;
+      ctx.beginPath(); ctx.ellipse(tx+tw/2+fi*8, flameY-8+flk, 7, 14+flk, 0, 0, Math.PI*2); ctx.fill();
+    }
+  }
+
+  // Labels
+  ctx.fillStyle='rgba(30,41,59,.6)'; ctx.font='10px Montserrat, sans-serif'; ctx.textAlign='center';
+  ctx.fillText('Miệng', tx+tw/2, ty-8);
+  ctx.fillText('Đáy', tx+tw/2, ty+th+22);
+
+  // State label
+  ctx.fillStyle = isA ? (p>0.7?'#FF8080':'rgba(30,41,59,.4)') : (p>0.7?'#80FF80':'rgba(30,41,59,.4)');
+  ctx.font = 'bold 11px Space Mono'; ctx.textAlign='center';
+  if (p>0.7) ctx.fillText(isA ? '❌ Không đối lưu':'✅ Có đối lưu', tx+tw/2, H-14);
+}
+
+// ── Main convection (thuốc tím) ──
+let convProgress = 0, convAnimId = null;
 let particles = [];
-let convActive = false;
 
-function createParticles() {
-    particles = [];
-    for(let i=0; i<40; i++) {
-        particles.push({
-            x: Math.random() * 60 - 30,
-            y: Math.random() * 200,
-            s: 0.5 + Math.random() * 1.5,
-            isUp: Math.random() > 0.5
-        });
-    }
+function initConvMain() {
+  convProgress=0; particles=[]; cancelAnimationFrame(convAnimId); drawConvMain(0);
+}
+function startConv() {
+  cancelAnimationFrame(convAnimId);
+  document.getElementById('conv-info').innerHTML='🟣 Dòng thuốc tím <strong>nóng đi lên</strong> (đỏ/tím), nước lạnh <strong>xanh chìm xuống</strong> — tạo vòng đối lưu!';
+  // Initialize particles
+  particles = Array.from({length:28}, (_,i)=>({
+    x: 0.3 + (i%4)*0.13, y: 0.75 + Math.floor(i/4)*0.04,
+    vx:0, vy:0, hot: i < 14, phase: i*0.7
+  }));
+  const s0=performance.now();
+  function step(now) {
+    convProgress = Math.min((now-s0)/800, 1);
+    updateConvParticles();
+    drawConvMain(convProgress);
+    convAnimId = requestAnimationFrame(step);
+  }
+  convAnimId = requestAnimationFrame(step);
+}
+function resetConv() {
+  cancelAnimationFrame(convAnimId); convProgress=0; particles=[];
+  document.getElementById('conv-info').innerHTML='Nhấn <strong>Đốt đèn cồn</strong> — quan sát dòng thuốc tím (tím) di chuyển lên và nước lạnh (xanh) chìm xuống.';
+  drawConvMain(0);
 }
 
-function startConv() { convActive = true; }
-function resetConv() { convActive = false; }
-
-function drawConv() {
-    const cv = document.getElementById('cv-conv');
-    const ctx = cv.getContext('2d');
-    const W = cv.width = cv.offsetWidth;
-    const H = cv.height;
-    ctx.clearRect(0,0,W,H);
-
-    const tx = W/2 - 40, ty = 50, tw = 80, th = 220;
-    
-    // Vẽ bình nước
-    ctx.strokeStyle = '#94A3B8';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(tx, ty, tw, th);
-    ctx.fillStyle = 'rgba(186, 230, 253, 0.3)';
-    ctx.fillRect(tx, ty, tw, th);
-
-    if(convActive) {
-        particles.forEach(p => {
-            if(p.isUp) {
-                p.y -= p.s;
-                if(p.y < 0) { p.isUp = false; p.x = Math.abs(p.x); }
-            } else {
-                p.y += p.s;
-                if(p.y > th) { p.isUp = true; p.x = -Math.abs(p.x); }
-            }
-            
-            ctx.fillStyle = p.isUp ? '#EF4444' : '#8B5CF6';
-            ctx.beginPath();
-            ctx.arc(tx + tw/2 + p.x, ty + p.y, 3, 0, Math.PI*2);
-            ctx.fill();
-        });
+function updateConvParticles() {
+  const t = Date.now()/1000;
+  particles.forEach(p2 => {
+    if (p2.hot) {
+      // Hot: rise up, then curve right/left
+      p2.vy = -0.003 * convProgress;
+      p2.vx = Math.sin(p2.y*Math.PI*2 + p2.phase + t*0.5) * 0.001 * convProgress;
+    } else {
+      // Cold: sink down, left side
+      p2.vy = 0.003 * convProgress;
+      p2.vx = Math.cos(p2.y*Math.PI*2 + p2.phase + t*0.5) * 0.001 * convProgress;
     }
-    requestAnimationFrame(drawConv);
+    p2.x = clamp(p2.x + p2.vx, 0.08, 0.92);
+    p2.y = clamp(p2.y + p2.vy, 0.05, 0.92);
+    // Wrap vertically
+    if (p2.y < 0.06) { p2.y = 0.06; p2.vy *= -0.3; p2.hot = false; }
+    if (p2.y > 0.90) { p2.y = 0.90; p2.vy *= -0.3; p2.hot = true; }
+  });
 }
 
-// Khởi chạy
-drawCond();
-drawMat();
-drawConv();
+function drawConvMain(p) {
+  const cv = document.getElementById('cv-conv');
+  if (!cv) return;
+  const W = cv.width = cv.offsetWidth, H = 280; cv.height = H;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle='#F1F5F9'; ctx.fillRect(0,0,W,H);
+
+  // Beaker
+  const bx=W*0.15, by=30, bw=W*0.7, bh=H-70;
+  // Water BG — gradually warms
+  const waterGr=ctx.createLinearGradient(0,by,0,by+bh);
+  waterGr.addColorStop(0, `hsl(${lerp(200,30,p*0.5)},70%,${lerp(20,35,p)}%)`);
+  waterGr.addColorStop(1, `hsl(${lerp(200,10,p)},90%,${lerp(10,30,p)}%)`);
+  ctx.fillStyle=waterGr;
+  ctx.fillRect(bx+2,by+2,bw-4,bh-2);
+
+  // Glass walls
+  ctx.strokeStyle='rgba(8,145,178,.15)'; ctx.lineWidth=2;
+  ctx.strokeRect(bx,by,bw,bh);
+
+  // Thuốc tím package
+  if (p<0.05) {
+    ctx.fillStyle='#8B008B';
+    ctx.beginPath(); ctx.ellipse(bx+bw*0.35, by+bh-15, 12, 6, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(30,41,59,.6)'; ctx.font='9px Space Mono'; ctx.textAlign='center';
+    ctx.fillText('Thuốc tím', bx+bw*0.35, by+bh-22);
+  }
+
+  // Particles
+  particles.forEach(pt => {
+    const px = bx + pt.x*bw, py = by + pt.y*bh;
+    const alpha = Math.min(convProgress*2, 0.85);
+    ctx.fillStyle = pt.hot
+      ? `rgba(160,0,160,${alpha})`
+      : `rgba(50,100,200,${alpha})`;
+    ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI*2); ctx.fill();
+  });
+
+  // Flow arrows overlay
+  if (p > 0.3) {
+    const alpha = Math.min((p-0.3)/0.4, 0.6);
+    // Rising hot (left column)
+    ctx.strokeStyle=`rgba(180,50,180,${alpha})`; ctx.lineWidth=2; ctx.lineCap='round';
+    for (let ay=by+bh-40; ay>by+20; ay-=60) {
+      ctx.beginPath(); ctx.moveTo(bx+bw*0.35,ay); ctx.lineTo(bx+bw*0.35,ay-40); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx+bw*0.35-7,ay-30); ctx.lineTo(bx+bw*0.35,ay-40); ctx.lineTo(bx+bw*0.35+7,ay-30); ctx.stroke();
+    }
+    // Sinking cold (right column)
+    ctx.strokeStyle=`rgba(50,100,220,${alpha})`;
+    for (let ay=by+20; ay<by+bh-30; ay+=60) {
+      ctx.beginPath(); ctx.moveTo(bx+bw*0.7,ay); ctx.lineTo(bx+bw*0.7,ay+40); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx+bw*0.7-7,ay+30); ctx.lineTo(bx+bw*0.7,ay+40); ctx.lineTo(bx+bw*0.7+7,ay+30); ctx.stroke();
+    }
+    // Labels
+    ctx.fillStyle=`rgba(200,120,220,${alpha})`; ctx.font='bold 10px Montserrat'; ctx.textAlign='center';
+    ctx.fillText('Nóng↑', bx+bw*0.35, by+bh+18);
+    ctx.fillStyle=`rgba(80,150,255,${alpha})`;
+    ctx.fillText('Lạnh↓', bx+bw*0.7, by+bh+18);
+  }
+
+  // Flame
+  if (p>0.01) {
+    const fx=bx+bw*0.35, fy=by+bh+4;
+    const tf=Date.now()/350;
+    for (let fi=-1; fi<=1; fi++) {
+      const flk=Math.sin(tf+fi)*3;
+      const g2=ctx.createRadialGradient(fx+fi*8,fy,0,fx+fi*8,fy-18,18);
+      g2.addColorStop(0,'rgba(255,255,150,.95)'); g2.addColorStop(.4,'rgba(255,100,10,.8)'); g2.addColorStop(1,'rgba(200,0,0,0)');
+      ctx.fillStyle=g2;
+      ctx.beginPath(); ctx.ellipse(fx+fi*8,fy-9+flk,7,16+flk,0,0,Math.PI*2); ctx.fill();
+    }
+    // Thermometer icon
+    ctx.fillStyle='rgba(30,41,59,.5)'; ctx.font='10px Space Mono'; ctx.textAlign='center';
+    ctx.fillText('🌡️ Đèn cồn', fx, fy+22);
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  TAB 4 — ĐỐI LƯU CHẤT KHÍ
+// ═══════════════════════════════════════════════
+
+// ── Candle Fan ──
+let fanOn=false, fanAngle=0, fanSpeedNow=0, fanAnimId=null;
+let airParticles=[];
+
+function initGas2() { fanOn=false; fanAngle=0; fanSpeedNow=0; airParticles=[]; cancelAnimationFrame(fanAnimId); fanLoop(); initWind(); }
+
+function lightCandles() {
+  fanOn=true;
+  document.getElementById('fan-info').innerHTML='🕯️ Không khí nóng bay lên → đẩy cánh quạt quay → <strong>đối lưu trong chất khí!</strong>';
+  airParticles = Array.from({length:40},(_,i)=>({ x:0.3+Math.random()*0.4, y:0.7+Math.random()*0.2, vy:0, vx:0, life:Math.random(), hot:true }));
+}
+function resetFan() {
+  fanOn=false; airParticles=[]; fanSpeedNow=0;
+  document.getElementById('fan-info').innerHTML='Nhấn <strong>Đốt nến</strong> — không khí nóng bay lên, không khí lạnh tràn vào đẩy cánh quạt quay.';
+}
+
+function fanLoop() {
+  const cv=document.getElementById('cv-fan');
+  if (!cv) { fanAnimId=requestAnimationFrame(fanLoop); return; }
+  const W=cv.width=cv.offsetWidth, H=320; cv.height=H;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle='#F1F5F9'; ctx.fillRect(0,0,W,H);
+
+  const cx=W/2, stemTop=70, stemBot=230;
+
+  // Update speed
+  fanSpeedNow = fanOn ? Math.min(fanSpeedNow+0.008, 0.06) : Math.max(fanSpeedNow-0.003,0);
+  fanAngle += fanSpeedNow;
+
+  // Air particles (hot rising)
+  if (fanOn) {
+    airParticles.forEach(pt => {
+      pt.vy -= 0.0025; pt.vx += (Math.random()-0.5)*0.003;
+      pt.y += pt.vy; pt.x += pt.vx;
+      pt.life -= 0.012;
+      if (pt.life<=0 || pt.y<0.05) {
+        pt.x=0.25+Math.random()*0.5; pt.y=0.68+Math.random()*0.15;
+        pt.vy=-0.002-Math.random()*0.002; pt.vx=0; pt.life=0.8+Math.random()*0.4;
+      }
+    });
+    airParticles.forEach(pt => {
+      const alpha=pt.life*0.65;
+      const col=`rgba(255,${Math.round(lerp(80,200,pt.life))},50,${alpha})`;
+      ctx.fillStyle=col;
+      ctx.beginPath(); ctx.arc(pt.x*W, pt.y*H, 3+pt.life*2, 0, Math.PI*2); ctx.fill();
+    });
+  }
+
+  // Fan blades
+  ctx.save(); ctx.translate(cx, stemTop);
+  const blades=8;
+  for (let b=0; b<blades; b++) {
+    ctx.save(); ctx.rotate(fanAngle + b*Math.PI*2/blades);
+    const gr=ctx.createLinearGradient(0,0,0,-48);
+    gr.addColorStop(0,'#CC4422'); gr.addColorStop(1,'#882211');
+    ctx.fillStyle=gr;
+    ctx.beginPath();
+    ctx.moveTo(-3,0); ctx.lineTo(-8,-20); ctx.lineTo(0,-48); ctx.lineTo(8,-20); ctx.lineTo(3,0);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.restore();
+  }
+  // Fan hub
+  ctx.fillStyle='#DBEAFE'; ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#7A9ABB'; ctx.beginPath(); ctx.arc(0,0,4,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+
+  // Stem
+  ctx.fillStyle='#DBEAFE'; ctx.fillRect(cx-3, stemTop, 6, stemBot-stemTop);
+
+  // Base
+  ctx.fillStyle='#DBEAFE'; ctx.beginPath(); ctx.roundRect(cx-50, stemBot, 100, 12, 4); ctx.fill();
+
+  // Candles
+  const candleXs=[cx-55, cx, cx+55];
+  candleXs.forEach((candleX,ci) => {
+    // Candle body
+    const cg=ctx.createLinearGradient(candleX-6,0,candleX+6,0);
+    cg.addColorStop(0,'#E8D0A0'); cg.addColorStop(.5,'#F5E8C0'); cg.addColorStop(1,'#C8B080');
+    ctx.fillStyle=cg;
+    ctx.fillRect(candleX-6, stemBot-50, 12, 50);
+    // Wick
+    ctx.strokeStyle='#E0F2FE'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(candleX, stemBot-50); ctx.lineTo(candleX, stemBot-60); ctx.stroke();
+    // Flame (if on)
+    if (fanOn) {
+      const tf=Date.now()/350+ci*1.3;
+      const flk=Math.sin(tf)*2;
+      const fg2=ctx.createRadialGradient(candleX,stemBot-62,0,candleX,stemBot-74,12);
+      fg2.addColorStop(0,'rgba(255,255,200,.95)'); fg2.addColorStop(.4,'rgba(255,140,20,.8)'); fg2.addColorStop(1,'rgba(200,0,0,0)');
+      ctx.fillStyle=fg2;
+      ctx.beginPath(); ctx.ellipse(candleX,stemBot-67+flk,5,12+flk,0,0,Math.PI*2); ctx.fill();
+    }
+  });
+
+  // Rotation speed indicator
+  if (fanOn) {
+    ctx.fillStyle=`rgba(245,166,35,${fanSpeedNow/0.06})`;
+    ctx.font='bold 12px Space Mono'; ctx.textAlign='center';
+    ctx.fillText(`↻ ${Math.round(fanSpeedNow*1000)}`, cx, H-12);
+  }
+
+  // Cool air coming in arrows
+  if (fanOn && fanSpeedNow > 0.01) {
+    const alpha=clamp((fanSpeedNow-0.01)/0.04,0,0.7);
+    ctx.strokeStyle=`rgba(80,160,255,${alpha})`; ctx.lineWidth=1.5; ctx.lineCap='round';
+    [[-1,0.12],[1,0.88]].forEach(([dir, xRatio])=>{
+      const ax=xRatio*W;
+      ctx.beginPath(); ctx.moveTo(ax,stemTop+50+dir*20); ctx.lineTo(ax+dir*(-60),stemTop+50); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ax+dir*(-60)+dir*10,stemTop+50-8); ctx.lineTo(ax+dir*(-60),stemTop+50); ctx.lineTo(ax+dir*(-60)+dir*10,stemTop+58); ctx.stroke();
+    });
+    ctx.fillStyle=`rgba(80,160,255,${alpha})`; ctx.font='9px Montserrat'; ctx.textAlign='center';
+    ctx.fillText('Khí lạnh→',W*0.12, stemTop+35);
+    ctx.fillText('←Khí lạnh',W*0.88, stemTop+35);
+  }
+
+  fanAnimId = requestAnimationFrame(fanLoop);
+}
+
+// ── Sea Breeze / Land Breeze ──
+let windMode=null, windAnimId=null;
+let windParticles=[];
+
+function initWind() { windMode=null; windParticles=[]; drawWind(0); }
+function resetWind() { windMode=null; cancelAnimationFrame(windAnimId); windParticles=[]; drawWind(0); document.getElementById('wind-info').innerHTML='Chọn <strong>Ban ngày</strong> hoặc <strong>Ban đêm</strong> để xem chiều gió thay đổi.'; }
+
+function startWind(mode) {
+  windMode=mode;
+  cancelAnimationFrame(windAnimId);
+  windParticles=Array.from({length:35},(_,i)=>({
+    x: mode==='day'? 0.1+Math.random()*0.2 : 0.6+Math.random()*0.25,
+    y: 0.55+Math.random()*0.3,
+    vx:0, vy:0, life:Math.random()+0.3
+  }));
+  const info={
+    day:'☀️ <strong>Ban ngày</strong>: Đất nóng hơn biển → không khí trên đất bay lên → gió mát từ biển thổi vào!',
+    night:'🌙 <strong>Ban đêm</strong>: Biển ấm hơn đất → không khí trên biển bay lên → gió từ đất thổi ra biển!'
+  };
+  document.getElementById('wind-info').innerHTML=info[mode];
+  function step() {
+    updateWindParticles();
+    drawWind(1);
+    windAnimId=requestAnimationFrame(step);
+  }
+  windAnimId=requestAnimationFrame(step);
+}
+
+function updateWindParticles() {
+  const isDay=windMode==='day';
+  windParticles.forEach(pt => {
+    // Day: particles start over land (left), move right (to sea) after rising
+    // Night: particles start over sea (right), move left
+    if (isDay) {
+      // Over land: rise up
+      if (pt.x < 0.5) { pt.vy-=0.003; pt.vx+=0.002; }
+      // High up: drift right toward sea
+      else if (pt.y < 0.35) { pt.vx+=0.002; pt.vy+=0.001; }
+      // Over sea: sink down
+      if (pt.x>0.7) { pt.vy+=0.002; pt.vx-=0.001; }
+    } else {
+      // Night opposite
+      if (pt.x>0.5) { pt.vy-=0.003; pt.vx-=0.002; }
+      else if (pt.y<0.35) { pt.vx-=0.002; pt.vy+=0.001; }
+      if (pt.x<0.3) { pt.vy+=0.002; pt.vx+=0.001; }
+    }
+    pt.vx*=0.96; pt.vy*=0.96;
+    pt.x=clamp(pt.x+pt.vx,0.02,0.98); pt.y=clamp(pt.y+pt.vy,0.05,0.88);
+    pt.life-=0.008;
+    if (pt.life<=0||pt.x<0.02||pt.x>0.98||pt.y<0.05) {
+      pt.x=isDay?0.1+Math.random()*0.2:0.6+Math.random()*0.25;
+      pt.y=0.55+Math.random()*0.25;
+      pt.vx=0; pt.vy=0; pt.life=0.6+Math.random()*0.5;
+    }
+  });
+}
+
+function drawWind(p) {
+  const cv=document.getElementById('cv-wind');
+  if (!cv) return;
+  const W=cv.width=cv.offsetWidth, H=240; cv.height=H;
+  const ctx=cv.getContext('2d');
+
+  // Sky
+  const skyGr=ctx.createLinearGradient(0,0,0,H*0.6);
+  if (windMode==='day') {
+    skyGr.addColorStop(0,'#1A4080'); skyGr.addColorStop(1,'#2A60B0');
+  } else {
+    skyGr.addColorStop(0,'#080818'); skyGr.addColorStop(1,'#101828');
+  }
+  ctx.fillStyle=skyGr; ctx.fillRect(0,0,W,H);
+
+  // Dividing line (mid-sea)
+  const seaLine=W*0.5, groundY=H*0.62;
+
+  // Land (left)
+  const landGr=ctx.createLinearGradient(0,groundY,0,H);
+  if (windMode==='day') { landGr.addColorStop(0,'#8B5A1A'); landGr.addColorStop(1,'#5A3A0A'); }
+  else                  { landGr.addColorStop(0,'#3A2808'); landGr.addColorStop(1,'#1A1204'); }
+  ctx.fillStyle=landGr; ctx.fillRect(0,groundY,seaLine,H-groundY);
+
+  // Sea (right)
+  const seaGr=ctx.createLinearGradient(0,groundY,0,H);
+  if (windMode==='day') { seaGr.addColorStop(0,'#1A5080'); seaGr.addColorStop(1,'#0A2850'); }
+  else                  { seaGr.addColorStop(0,'#1A4070'); seaGr.addColorStop(1,'#0A2040'); }
+  ctx.fillStyle=seaGr; ctx.fillRect(seaLine,groundY,W-seaLine,H-groundY);
+
+  // Wave on sea surface
+  ctx.strokeStyle='rgba(8,145,178,.4)'; ctx.lineWidth=1.5;
+  for (let wx=seaLine; wx<W; wx+=22) {
+    ctx.beginPath(); ctx.arc(wx, groundY, 8, Math.PI, 0); ctx.stroke();
+  }
+
+  // Sun or Moon
+  if (windMode==='day') {
+    const sg=ctx.createRadialGradient(W*0.75,H*0.18,0,W*0.75,H*0.18,35);
+    sg.addColorStop(0,'rgba(255,255,150,.9)'); sg.addColorStop(1,'rgba(255,200,50,0)');
+    ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(W*0.75,H*0.18,28,0,Math.PI*2); ctx.fill();
+  } else {
+    ctx.fillStyle='rgba(220,220,180,.8)';
+    ctx.beginPath(); ctx.arc(W*0.75,H*0.18,14,0,Math.PI*2); ctx.fill();
+  }
+
+  // Labels
+  ctx.fillStyle='rgba(30,41,59,.7)'; ctx.font='bold 12px Montserrat'; ctx.textAlign='center';
+  ctx.fillText('ĐẤT', seaLine*0.5, groundY-10);
+  ctx.fillText('BIỂN', seaLine+(W-seaLine)*0.5, groundY-10);
+  // Temp label
+  if (windMode) {
+    const landHotter=windMode==='day';
+    ctx.fillStyle=landHotter?'#FF8040':'#4080FF'; ctx.font='bold 10px Space Mono';
+    ctx.fillText(landHotter?'Nóng hơn ↑':'Lạnh hơn', seaLine*0.5, groundY+18);
+    ctx.fillStyle=landHotter?'#4080FF':'#FF8040';
+    ctx.fillText(landHotter?'Mát hơn':'Ấm hơn ↑', seaLine+(W-seaLine)*0.5, groundY+18);
+  }
+
+  // Wind particles
+  windParticles.forEach(pt => {
+    const alpha=pt.life*0.7;
+    ctx.fillStyle=windMode==='day'?`rgba(255,180,80,${alpha})`:`rgba(80,160,255,${alpha})`;
+    ctx.beginPath(); ctx.arc(pt.x*W, pt.y*H, 3, 0, Math.PI*2); ctx.fill();
+  });
+
+  // Wind arrow label
+  if (windMode) {
+    ctx.fillStyle=windMode==='day'?'rgba(255,180,80,.8)':'rgba(80,160,255,.8)';
+    ctx.font='bold 11px Montserrat'; ctx.textAlign='center';
+    ctx.fillText(windMode==='day'?'Gió biển → vào đất':'Gió đất → ra biển', W/2, H-12);
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  INIT & RESIZE
+// ═══════════════════════════════════════════════
+window.addEventListener('load', () => {
+  initCond();
+  condLoop();
+  // Keep pan/mat loop for flame flicker
+  function panFlameLoop() {
+    if (document.getElementById('tab-material').classList.contains('active')) {
+      drawMat(matProgress);
+      drawPan(panProgress);
+    }
+    requestAnimationFrame(panFlameLoop);
+  }
+  panFlameLoop();
+  // Tube loop
+  function tubeLoop() {
+    if (document.getElementById('tab-convection').classList.contains('active')) {
+      ['a','b'].forEach(id => drawTube(id, tubeStates[id].progress));
+    }
+    requestAnimationFrame(tubeLoop);
+  }
+  tubeLoop();
+});
+
+window.addEventListener('resize', () => {
+  drawCond();
+  drawMat(matProgress); drawPan(panProgress);
+  ['a','b'].forEach(id=>drawTube(id,tubeStates[id].progress));
+  drawConvMain(convProgress);
+  drawWind(windMode?1:0);
+});
 </script>
 </body>
 </html>
