@@ -392,12 +392,17 @@ function drawCond() {
   ctx.fillStyle = 'rgba(255,255,255,0.12)';
   ctx.fillRect(rodX+4, rodY+3, rodW-8, 5);
 
-  // Label A and B
-  ctx.fillStyle = perc > 0.05 ? '#FF6040' : '#7A9ABB';
-  ctx.font = 'bold 20px Montserrat, sans-serif';
-  ctx.fillText('A', rodX-30, rodY+14);   // lùi ra xa hơn
-  ctx.fillStyle = '#7A9ABB';
-  ctx.fillText('B', rodX+rodW+30, rodY+14);  // ra xa hơn
+  // Label A and B — đặt phía trên thanh, tránh va vào temp bar
+  ctx.fillStyle = perc > 0.05 ? '#FF5A1F' : '#64748B';
+  ctx.font = 'bold 18px Montserrat, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('A', rodX - 28, rodY - 10);
+  ctx.fillStyle = '#64748B';
+  ctx.fillText('B', rodX + rodW + 28, rodY - 10);
+  // Gạch dưới label
+  ctx.strokeStyle = perc > 0.05 ? '#FF5A1F' : '#CBD5E1'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(rodX-2, rodY); ctx.lineTo(rodX-2, rodY+rodH); ctx.stroke();
+  ctx.strokeStyle = '#CBD5E1';
+  ctx.beginPath(); ctx.moveTo(rodX+rodW+2, rodY); ctx.lineTo(rodX+rodW+2, rodY+rodH); ctx.stroke();
 
   // === Nails ===
   const nailSpacing = rodW / 5;
@@ -529,11 +534,11 @@ function drawMat(progress) {
   if (!cv) return;
   const W = cv.width = cv.offsetWidth, H = 300; cv.height = H;
   const ctx = cv.getContext('2d');
-  ctx.fillStyle = '#F1F5F9'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#F8FAFC'; ctx.fillRect(0,0,W,H);
 
-  const barH = 20, gap = 10;
+  const barH = 26, gap = 10;
   const maxVal = Math.log10(MATERIALS[MATERIALS.length-1].val + 1);
-  const padL = 90, padR = 100;
+  const padL = 100, padR = 90;
   const totalH = MATERIALS.length*(barH+gap) - gap;
   const startY = (H - totalH)/2;
 
@@ -543,30 +548,30 @@ function drawMat(progress) {
     const maxW = W - padL - padR;
     const fillW = maxW * logRatio * progress;
 
-    // BG
-    ctx.fillStyle = 'rgba(30,41,59,.08)';
-    ctx.beginPath(); ctx.roundRect(padL, y, maxW, barH, 4); ctx.fill();
+    // Bar nền
+    ctx.fillStyle = '#E2E8F0';
+    ctx.beginPath(); ctx.roundRect(padL, y, maxW, barH, 5); ctx.fill();
 
-    // Fill
+    // Bar fill gradient
     const fg = ctx.createLinearGradient(padL, 0, padL+maxW, 0);
-    fg.addColorStop(0, '#FF4020'); fg.addColorStop(0.4, m.color); fg.addColorStop(1, m.color);
+    fg.addColorStop(0, '#FF5A1F'); fg.addColorStop(0.35, m.color); fg.addColorStop(1, m.color);
     ctx.fillStyle = fg;
-    if (fillW > 0) { ctx.beginPath(); ctx.roundRect(padL, y, fillW, barH, 4); ctx.fill(); }
+    if (fillW > 0) { ctx.beginPath(); ctx.roundRect(padL, y, fillW, barH, 5); ctx.fill(); }
 
-    // Label left
-    ctx.fillStyle = '#1E293B';   // màu tối, đọc được trên nền sáng
-    ctx.font = 'bold 12px Montserrat, sans-serif'; ctx.textAlign = 'right';
-    ctx.fillText(m.name, padL-8, y+barH/2+4);
+    // Label tên — đậm tối, dễ đọc
+    ctx.fillStyle = '#1E293B';
+    ctx.font = 'bold 13px Montserrat, sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(m.name, padL-10, y+barH/2+5);
 
-    // Value right
+    // Giá trị bên phải — màu tối
     if (progress > 0.05) {
       ctx.fillStyle = '#1E293B';
-      ctx.font = 'bold 11px Space Mono, monospace'; ctx.textAlign = 'left';
-      ctx.fillText(Math.round(m.val * progress).toLocaleString('vi'), padL+maxW+8, y+barH/2+4);
+      ctx.font = 'bold 12px Space Mono, monospace'; ctx.textAlign = 'left';
+      ctx.fillText(Math.round(m.val * progress).toLocaleString('vi'), padL+maxW+10, y+barH/2+5);
     }
   });
 
-  // Flame at left
+  // Flame
   if (progress > 0.01) {
     const fy = startY + totalH/2;
     const tf = Date.now()/400;
@@ -579,8 +584,8 @@ function drawMat(progress) {
     }
   }
 
-  // scale label
-  ctx.fillStyle = 'rgba(30,41,59,.3)'; ctx.font = '9px Space Mono'; ctx.textAlign = 'center';
+  // Scale label
+  ctx.fillStyle = '#94A3B8'; ctx.font = '10px Space Mono'; ctx.textAlign = 'center';
   ctx.fillText('(thang logarithm)', W/2, H-8);
 }
 
@@ -734,83 +739,82 @@ function drawTube(id, p) {
   if (!cv) return;
   const W = cv.width = cv.offsetWidth, H = 300; cv.height = H;
   const ctx = cv.getContext('2d');
-  ctx.fillStyle = '#F1F5F9'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#F8FAFC'; ctx.fillRect(0,0,W,H);
 
-  const tw = 44, th = 200, tx = (W-tw)/2, ty = 50;
+  const tw = 52, th = 210, tx = (W-tw)/2, ty = 45;
   const isA = id==='a';
 
-  // Glass tube outline
-  ctx.strokeStyle = 'rgba(200,220,255,.3)'; ctx.lineWidth = 2.5;
-  ctx.strokeRect(tx, ty, tw, th);
-
-  // Water fill (gradient hot zone)
+  // Nước bên trong — màu sáng
   const waterGr = ctx.createLinearGradient(0, ty, 0, ty+th);
   if (isA) {
-    // Tube A: only top gets hot (miệng ở trên)
-    waterGr.addColorStop(0, `hsl(${lerp(30,210,1-p)},80%,${lerp(55,35,1-p)}%)`);
-    waterGr.addColorStop(Math.min(p*0.6+0.01,1), '#1A4080');
-    waterGr.addColorStop(1, '#0A2040');
+    // Ống A: miệng nóng dần (gradient từ trên xuống)
+    waterGr.addColorStop(0, `hsl(${lerp(25,200,1-p)},85%,${lerp(70,82,1-p)}%)`);
+    waterGr.addColorStop(Math.min(p*0.65+0.01,1), '#BAE6FD');
+    waterGr.addColorStop(1, '#E0F2FE');
   } else {
-    // Tube B: whole tube heats from bottom
-    waterGr.addColorStop(0, p>0.5 ? `hsl(${lerp(210,30,p-0.5)},80%,50%)` : '#1A4080');
-    waterGr.addColorStop(1, `hsl(${lerp(210,20,p)},90%,${lerp(35,55,p)}%)`);
+    // Ống B: đáy nóng dần lên toàn ống
+    waterGr.addColorStop(0, p>0.5 ? `hsl(${lerp(200,25,p-0.5)},80%,72%)` : '#BAE6FD');
+    waterGr.addColorStop(1, `hsl(${lerp(200,20,p)},85%,${lerp(82,68,p)}%)`);
   }
   ctx.fillStyle = waterGr;
-  ctx.fillRect(tx+1, ty+1, tw-2, th-2);
+  ctx.beginPath(); ctx.roundRect(tx+2, ty+2, tw-4, th-4, 3); ctx.fill();
 
-  // Convection arrows in tube (only tube b gets them)
+  // Viền ống — rõ ràng
+  ctx.strokeStyle = '#94A3B8'; ctx.lineWidth = 2.5;
+  ctx.strokeRect(tx, ty, tw, th);
+  // Highlight kính
+  ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(tx+6, ty+6); ctx.lineTo(tx+6, ty+th-6); ctx.stroke();
+
+  // Mũi tên đối lưu trong ống B
   if (!isA && p > 0.15) {
-    const arrowAlpha = Math.min((p-0.15)/0.4, 0.85);
-    // Up arrows (hot water rising)
-    ctx.strokeStyle = `rgba(255,120,50,${arrowAlpha})`;
-    ctx.lineWidth = 2; ctx.lineCap = 'round';
-    for (let ay = ty+th-30; ay > ty+10; ay -= 55) {
-      ctx.beginPath(); ctx.moveTo(tx+14, ay); ctx.lineTo(tx+14, ay-30); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(tx+9, ay-22); ctx.lineTo(tx+14, ay-30); ctx.lineTo(tx+19, ay-22); ctx.stroke();
+    const arrowAlpha = Math.min((p-0.15)/0.4, 0.9);
+    // Lên — nóng (cam đỏ)
+    ctx.strokeStyle = `rgba(239,68,68,${arrowAlpha})`; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    for (let ay = ty+th-35; ay > ty+15; ay -= 60) {
+      ctx.beginPath(); ctx.moveTo(tx+16, ay); ctx.lineTo(tx+16, ay-32); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(tx+9, ay-22); ctx.lineTo(tx+16, ay-32); ctx.lineTo(tx+23, ay-22); ctx.stroke();
     }
-    // Down arrows (cold water sinking)
-    ctx.strokeStyle = `rgba(50,150,255,${arrowAlpha})`;
-    for (let ay = ty+20; ay < ty+th-10; ay += 55) {
-      ctx.beginPath(); ctx.moveTo(tx+30, ay); ctx.lineTo(tx+30, ay+30); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(tx+25, ay+22); ctx.lineTo(tx+30, ay+30); ctx.lineTo(tx+35, ay+22); ctx.stroke();
+    // Xuống — lạnh (xanh)
+    ctx.strokeStyle = `rgba(37,99,235,${arrowAlpha})`;
+    for (let ay = ty+20; ay < ty+th-15; ay += 60) {
+      ctx.beginPath(); ctx.moveTo(tx+36, ay); ctx.lineTo(tx+36, ay+32); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(tx+29, ay+22); ctx.lineTo(tx+36, ay+32); ctx.lineTo(tx+43, ay+22); ctx.stroke();
     }
   }
 
-  // WAX blob
-  const waxY = isA ? ty+th-12 : ty+8; // a=bottom, b=top
-  const waxMelted = p > 0.7 && !isA; // only b melts
-  ctx.fillStyle = waxMelted ? 'rgba(255,240,100,.3)' : (isA ? '#FFEE88' : '#FFEE88');
-  ctx.beginPath(); ctx.ellipse(tx+tw/2, waxY, waxMelted?18:10, 5, 0, 0, Math.PI*2); ctx.fill();
-  if (!waxMelted) {
-    ctx.fillStyle = '#FFCC00'; ctx.font = '9px Space Mono'; ctx.textAlign='center';
-    ctx.fillText('Sáp', tx+tw/2, waxY+4);
-  } else {
-    ctx.fillStyle = 'rgba(255,230,50,.6)'; ctx.font = '9px Space Mono'; ctx.textAlign='center';
-    ctx.fillText('Sáp chảy!', tx+tw/2, waxY+4);
-  }
+  // Sáp
+  const waxY = isA ? ty+th-14 : ty+10;
+  const waxMelted = p > 0.7 && !isA;
+  ctx.fillStyle = waxMelted ? 'rgba(234,179,8,0.5)' : '#FDE047';
+  ctx.beginPath(); ctx.ellipse(tx+tw/2, waxY, waxMelted?22:12, 6, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#92400E'; ctx.font = 'bold 10px Montserrat'; ctx.textAlign='center';
+  ctx.fillText(waxMelted ? 'Sáp chảy! 🔥' : 'Sáp', tx+tw/2, waxY - 10);
 
-  // Flame
-  const flameY = isA ? ty+8 : ty+th+12;
+  // Lửa
+  const flameY = isA ? ty + 5 : ty+th+12;
   if (p>0.02) {
     const tf=Date.now()/350;
     for (let fi=-1; fi<=1; fi++) {
       const flk=Math.sin(tf+fi)*3;
-      const g2=ctx.createRadialGradient(tx+tw/2+fi*8, flameY, 0, tx+tw/2+fi*8, flameY-16, 16);
-      g2.addColorStop(0,'rgba(255,255,150,.9)'); g2.addColorStop(.5,'rgba(255,100,0,.7)'); g2.addColorStop(1,'rgba(200,0,0,0)');
+      const g2=ctx.createRadialGradient(tx+tw/2+fi*8, flameY, 0, tx+tw/2+fi*8, flameY-18, 18);
+      g2.addColorStop(0,'rgba(255,255,150,.95)'); g2.addColorStop(.4,'rgba(255,100,0,.8)'); g2.addColorStop(1,'rgba(200,0,0,0)');
       ctx.fillStyle=g2;
-      ctx.beginPath(); ctx.ellipse(tx+tw/2+fi*8, flameY-8+flk, 7, 14+flk, 0, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(tx+tw/2+fi*8, flameY-8+flk, 8, 16+flk, 0, 0, Math.PI*2); ctx.fill();
     }
   }
 
-  // Labels
-  ctx.fillStyle='rgba(30,41,59,.6)'; ctx.font='10px Montserrat, sans-serif'; ctx.textAlign='center';
-  ctx.fillText('Miệng', tx+tw/2, ty-8);
-  ctx.fillText('Đáy', tx+tw/2, ty+th+22);
+  // Label miệng / đáy
+  ctx.fillStyle='#475569'; ctx.font='bold 12px Montserrat, sans-serif'; ctx.textAlign='center';
+  ctx.fillText('MIỆNG', tx+tw/2, ty-12);
+  ctx.fillText('ĐÁY', tx+tw/2, ty+th+22);
 
-  // State label
-  ctx.fillStyle = isA ? (p>0.7?'#FF8080':'rgba(30,41,59,.4)') : (p>0.7?'#80FF80':'rgba(30,41,59,.4)');
-  ctx.font = 'bold 11px Space Mono'; ctx.textAlign='center';
-  if (p>0.7) ctx.fillText(isA ? '❌ Không đối lưu':'✅ Có đối lưu', tx+tw/2, H-14);
+  // Kết quả
+  if (p>0.7) {
+    ctx.fillStyle = isA ? '#DC2626' : '#16A34A';
+    ctx.font = 'bold 13px Montserrat'; ctx.textAlign='center';
+    ctx.fillText(isA ? '❌ Không đối lưu' : '✅ Có đối lưu', tx+tw/2, H-12);
+  }
 }
 
 // ── Main convection (thuốc tím) ──
@@ -826,7 +830,7 @@ function startConv() {
   // Initialize particles
   particles = Array.from({length:28}, (_,i)=>({
     x: 0.3 + (i%4)*0.13, y: 0.75 + Math.floor(i/4)*0.04,
-    vx:0, vy:0, hot: i < 14, phase: i*0.7
+    vx:0, vy:0, hot: i < 14, phase: i*0.7, life: 0.8
   }));
   const s0=performance.now();
   function step(now) {
@@ -872,55 +876,70 @@ function drawConvMain(p) {
 
   // Beaker
   const bx=W*0.15, by=30, bw=W*0.7, bh=H-70;
-  // Water BG — gradually warms
-  const waterGr=ctx.createLinearGradient(0,by,0,by+bh);
-  waterGr.addColorStop(0, `hsl(${lerp(200,30,p*0.5)},70%,${lerp(20,35,p)}%)`);
-  waterGr.addColorStop(1, `hsl(${lerp(200,10,p)},90%,${lerp(10,30,p)}%)`);
-  ctx.fillStyle=waterGr;
-  ctx.fillRect(bx+2,by+2,bw-4,bh-2);
 
-  // Glass walls
-  ctx.strokeStyle='rgba(8,145,178,.15)'; ctx.lineWidth=2;
+  // Water BG — nhạt xanh, dần ấm khi p tăng
+  const waterGr=ctx.createLinearGradient(0,by,0,by+bh);
+  waterGr.addColorStop(0, `hsl(${lerp(200,25,p*0.5)},80%,${lerp(82,72,p)}%)`);
+  waterGr.addColorStop(1, `hsl(${lerp(205,20,p)},75%,${lerp(75,65,p)}%)`);
+  ctx.fillStyle=waterGr;
+  ctx.beginPath(); ctx.roundRect(bx+2,by+2,bw-4,bh-2,4); ctx.fill();
+
+  // Glass walls — viền rõ hơn
+  ctx.strokeStyle='#94A3B8'; ctx.lineWidth=2.5;
   ctx.strokeRect(bx,by,bw,bh);
+  // Highlight bên trái (hiệu ứng kính)
+  ctx.strokeStyle='rgba(255,255,255,0.7)'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(bx+6,by+8); ctx.lineTo(bx+6,by+bh-8); ctx.stroke();
 
   // Thuốc tím package
   if (p<0.05) {
-    ctx.fillStyle='#8B008B';
-    ctx.beginPath(); ctx.ellipse(bx+bw*0.35, by+bh-15, 12, 6, 0, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle='rgba(30,41,59,.6)'; ctx.font='9px Space Mono'; ctx.textAlign='center';
-    ctx.fillText('Thuốc tím', bx+bw*0.35, by+bh-22);
+    ctx.fillStyle='#9333EA';
+    ctx.beginPath(); ctx.ellipse(bx+bw*0.35, by+bh-16, 14, 7, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle='#6B21A8'; ctx.font='bold 11px Montserrat'; ctx.textAlign='center';
+    ctx.fillText('Thuốc tím', bx+bw*0.35, by+bh-28);
   }
 
-  // Particles
+  // Particles — to hơn, màu tươi hơn
   particles.forEach(pt => {
     const px = bx + pt.x*bw, py = by + pt.y*bh;
-    const alpha = Math.min(convProgress*2, 0.85);
-    ctx.fillStyle = pt.hot
-      ? `rgba(160,0,160,${alpha})`
-      : `rgba(50,100,200,${alpha})`;
-    ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI*2); ctx.fill();
+    const alpha = Math.min(convProgress*2, 0.9);
+    const r = 5 + pt.life*1.5;
+    // Glow
+    const glow = ctx.createRadialGradient(px,py,0,px,py,r*2.2);
+    if (pt.hot) {
+      glow.addColorStop(0,`rgba(168,85,247,${alpha})`);
+      glow.addColorStop(1,'rgba(168,85,247,0)');
+    } else {
+      glow.addColorStop(0,`rgba(59,130,246,${alpha})`);
+      glow.addColorStop(1,'rgba(59,130,246,0)');
+    }
+    ctx.fillStyle=glow;
+    ctx.beginPath(); ctx.arc(px,py,r*2.2,0,Math.PI*2); ctx.fill();
+    // Dot
+    ctx.fillStyle = pt.hot ? `rgba(168,85,247,${alpha})` : `rgba(59,130,246,${alpha})`;
+    ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2); ctx.fill();
   });
 
-  // Flow arrows overlay
+  // Flow arrows — đậm, dễ thấy
   if (p > 0.3) {
-    const alpha = Math.min((p-0.3)/0.4, 0.6);
-    // Rising hot (left column)
-    ctx.strokeStyle=`rgba(180,50,180,${alpha})`; ctx.lineWidth=2; ctx.lineCap='round';
+    const alpha = Math.min((p-0.3)/0.4, 0.85);
+    // Rising hot (tím) — cột trái
+    ctx.strokeStyle=`rgba(147,51,234,${alpha})`; ctx.lineWidth=2.5; ctx.lineCap='round';
     for (let ay=by+bh-40; ay>by+20; ay-=60) {
       ctx.beginPath(); ctx.moveTo(bx+bw*0.35,ay); ctx.lineTo(bx+bw*0.35,ay-40); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(bx+bw*0.35-7,ay-30); ctx.lineTo(bx+bw*0.35,ay-40); ctx.lineTo(bx+bw*0.35+7,ay-30); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx+bw*0.35-8,ay-28); ctx.lineTo(bx+bw*0.35,ay-42); ctx.lineTo(bx+bw*0.35+8,ay-28); ctx.stroke();
     }
-    // Sinking cold (right column)
-    ctx.strokeStyle=`rgba(50,100,220,${alpha})`;
+    // Sinking cold (xanh) — cột phải
+    ctx.strokeStyle=`rgba(37,99,235,${alpha})`;
     for (let ay=by+20; ay<by+bh-30; ay+=60) {
       ctx.beginPath(); ctx.moveTo(bx+bw*0.7,ay); ctx.lineTo(bx+bw*0.7,ay+40); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(bx+bw*0.7-7,ay+30); ctx.lineTo(bx+bw*0.7,ay+40); ctx.lineTo(bx+bw*0.7+7,ay+30); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx+bw*0.7-8,ay+28); ctx.lineTo(bx+bw*0.7,ay+42); ctx.lineTo(bx+bw*0.7+8,ay+28); ctx.stroke();
     }
-    // Labels
-    ctx.fillStyle=`rgba(200,120,220,${alpha})`; ctx.font='bold 10px Montserrat'; ctx.textAlign='center';
-    ctx.fillText('Nóng↑', bx+bw*0.35, by+bh+18);
-    ctx.fillStyle=`rgba(80,150,255,${alpha})`;
-    ctx.fillText('Lạnh↓', bx+bw*0.7, by+bh+18);
+    // Labels bên dưới bình
+    ctx.fillStyle=`rgba(147,51,234,${alpha})`; ctx.font='bold 12px Montserrat'; ctx.textAlign='center';
+    ctx.fillText('Nóng ↑', bx+bw*0.35, by+bh+20);
+    ctx.fillStyle=`rgba(37,99,235,${alpha})`;
+    ctx.fillText('Lạnh ↓', bx+bw*0.7, by+bh+20);
   }
 
   // Flame
@@ -1126,71 +1145,84 @@ function drawWind(p) {
   const W=cv.width=cv.offsetWidth, H=240; cv.height=H;
   const ctx=cv.getContext('2d');
 
-  // Sky
-  const skyGr=ctx.createLinearGradient(0,0,0,H*0.6);
+  // Bầu trời sáng
+  const skyGr=ctx.createLinearGradient(0,0,0,H*0.62);
   if (windMode==='day') {
-    skyGr.addColorStop(0,'#7EC8E3'); skyGr.addColorStop(1,'#B8E4F5');
+    skyGr.addColorStop(0,'#7DD3FC'); skyGr.addColorStop(1,'#BAE6FD');
   } else {
-    skyGr.addColorStop(0,'#1A2744'); skyGr.addColorStop(1,'#2D3F6B');
+    skyGr.addColorStop(0,'#1E3A5F'); skyGr.addColorStop(1,'#2D5080');
   }
   ctx.fillStyle=skyGr; ctx.fillRect(0,0,W,H);
 
-  // Dividing line (mid-sea)
   const seaLine=W*0.5, groundY=H*0.62;
 
-  // Land (left)
+  // Đất — xanh cỏ
   const landGr=ctx.createLinearGradient(0,groundY,0,H);
-  if (windMode==='day') { llandGr.addColorStop(0,'#6DBE6D'); landGr.addColorStop(1,'#4DA84D'); }
-  else                  { landGr.addColorStop(0,'#2D5A2D'); landGr.addColorStop(1,'#1A3A1A'); }
+  if (windMode==='day') { landGr.addColorStop(0,'#4ADE80'); landGr.addColorStop(1,'#16A34A'); }
+  else                  { landGr.addColorStop(0,'#166534'); landGr.addColorStop(1,'#14532D'); }
   ctx.fillStyle=landGr; ctx.fillRect(0,groundY,seaLine,H-groundY);
 
-  // Sea (right)
+  // Biển — xanh dương sáng
   const seaGr=ctx.createLinearGradient(0,groundY,0,H);
-  if (windMode==='day') { seaGr.addColorStop(0,'#2E86C1'); seaGr.addColorStop(1,'#1A6B9A'); }
-  else                  { seaGr.addColorStop(0,'#1A4A70'); seaGr.addColorStop(1,'#0D2E4A'); }
+  if (windMode==='day') { seaGr.addColorStop(0,'#38BDF8'); seaGr.addColorStop(1,'#0284C7'); }
+  else                  { seaGr.addColorStop(0,'#1D4ED8'); seaGr.addColorStop(1,'#1E3A8A'); }
   ctx.fillStyle=seaGr; ctx.fillRect(seaLine,groundY,W-seaLine,H-groundY);
 
-  // Wave on sea surface
-  ctx.strokeStyle='rgba(255,255,255,.6)';
-  for (let wx=seaLine; wx<W; wx+=22) {
-    ctx.beginPath(); ctx.arc(wx, groundY, 8, Math.PI, 0); ctx.stroke();
+  // Đường phân cách
+  ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(seaLine,groundY); ctx.lineTo(seaLine,H); ctx.stroke();
+
+  // Sóng biển trắng
+  ctx.strokeStyle='rgba(255,255,255,0.65)'; ctx.lineWidth=1.5;
+  for (let wx=seaLine+14; wx<W-8; wx+=24) {
+    ctx.beginPath(); ctx.arc(wx, groundY, 9, Math.PI, 0); ctx.stroke();
   }
 
-  // Sun or Moon
+  // Mặt trời / trăng
   if (windMode==='day') {
-    const sg=ctx.createRadialGradient(W*0.75,H*0.18,0,W*0.75,H*0.18,35);
-    sg.addColorStop(0,'rgba(255,255,150,.9)'); sg.addColorStop(1,'rgba(255,200,50,0)');
-    ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(W*0.75,H*0.18,28,0,Math.PI*2); ctx.fill();
+    const sg=ctx.createRadialGradient(W*0.78,H*0.18,0,W*0.78,H*0.18,30);
+    sg.addColorStop(0,'rgba(253,224,71,1)'); sg.addColorStop(0.5,'rgba(250,204,21,0.8)'); sg.addColorStop(1,'rgba(250,204,21,0)');
+    ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(W*0.78,H*0.18,28,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(253,224,71,0.5)'; ctx.lineWidth=1.5;
+    for(let a=0;a<8;a++){
+      const ang=a*Math.PI/4;
+      ctx.beginPath(); ctx.moveTo(W*0.78+Math.cos(ang)*32,H*0.18+Math.sin(ang)*32);
+      ctx.lineTo(W*0.78+Math.cos(ang)*42,H*0.18+Math.sin(ang)*42); ctx.stroke();
+    }
   } else {
-    ctx.fillStyle='rgba(220,220,180,.8)';
-    ctx.beginPath(); ctx.arc(W*0.75,H*0.18,14,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(226,232,240,0.9)';
+    ctx.beginPath(); ctx.arc(W*0.78,H*0.18,14,0,Math.PI*2); ctx.fill();
   }
 
-  // Labels
-  ctx.fillStyle='rgba(30,41,59,.7)'; ctx.font='bold 12px Montserrat'; ctx.textAlign='center';
+  // Labels đất / biển
+  ctx.font='bold 13px Montserrat'; ctx.textAlign='center';
+  ctx.fillStyle = windMode==='day' ? '#14532D' : '#BAE6FD';
   ctx.fillText('ĐẤT', seaLine*0.5, groundY-10);
+  ctx.fillStyle = windMode==='day' ? '#0C4A6E' : '#DBEAFE';
   ctx.fillText('BIỂN', seaLine+(W-seaLine)*0.5, groundY-10);
-  // Temp label
+
+  // Nhãn nhiệt độ
   if (windMode) {
-    const landHotter=windMode==='day';
-    ctx.fillStyle=landHotter?'#FF8040':'#4080FF'; ctx.font='bold 10px Space Mono';
-    ctx.fillText(landHotter?'Nóng hơn ↑':'Lạnh hơn', seaLine*0.5, groundY+18);
-    ctx.fillStyle=landHotter?'#4080FF':'#FF8040';
-    ctx.fillText(landHotter?'Mát hơn':'Ấm hơn ↑', seaLine+(W-seaLine)*0.5, groundY+18);
+    const landHot=windMode==='day';
+    ctx.fillStyle=landHot?'#DC2626':'#2563EB'; ctx.font='bold 11px Montserrat';
+    ctx.fillText(landHot?'Nóng hơn ↑':'Lạnh hơn', seaLine*0.5, groundY+18);
+    ctx.fillStyle=landHot?'#2563EB':'#DC2626';
+    ctx.fillText(landHot?'Mát hơn':'Ấm hơn ↑', seaLine+(W-seaLine)*0.5, groundY+18);
   }
 
-  // Wind particles
+  // Hạt gió — to, màu đậm
   windParticles.forEach(pt => {
-    const alpha=pt.life*0.7;
-    ctx.fillStyle=windMode==='day'?`rgba(255,120,20,${alpha})`:`rgba(120,190,255,${alpha})`;
-    ctx.beginPath(); ctx.arc(pt.x*W, pt.y*H, 3, 0, Math.PI*2); ctx.fill();
+    const alpha=Math.min(pt.life*0.9, 0.88);
+    const r=4+pt.life*2;
+    ctx.fillStyle=windMode==='day'?`rgba(239,68,68,${alpha})`:`rgba(147,197,253,${alpha})`;
+    ctx.beginPath(); ctx.arc(pt.x*W, pt.y*H, r, 0, Math.PI*2); ctx.fill();
   });
 
-  // Wind arrow label
+  // Nhãn chiều gió
   if (windMode) {
-    ctx.fillStyle=windMode==='day'?'rgba(255,180,80,.8)':'rgba(80,160,255,.8)';
-    ctx.font='bold 11px Montserrat'; ctx.textAlign='center';
-    ctx.fillText(windMode==='day'?'Gió biển → vào đất':'Gió đất → ra biển', W/2, H-12);
+    ctx.fillStyle=windMode==='day'?'#DC2626':'#60A5FA';
+    ctx.font='bold 13px Montserrat'; ctx.textAlign='center';
+    ctx.fillText(windMode==='day'?'← Gió biển thổi vào đất':'Gió đất thổi ra biển →', W/2, H-10);
   }
 }
 
