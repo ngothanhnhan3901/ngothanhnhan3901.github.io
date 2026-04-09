@@ -235,10 +235,18 @@ input[type=range]::-webkit-slider-thumb {
     </div>
     <div class="info-box" id="pan-info">Nhấn <strong>Bật bếp</strong> — nhiệt lan qua chảo kim loại nhưng bị chặn ở cán gỗ.</div>
   </div>
+  <div class="exp-card amber">
+    <h3><span class="icon-badge amber">🏠</span>Ứng dụng: Mái ngói vs Mái tôn</h3>
+    <canvas id="cv-roof" height="260"></canvas>
+    <div class="controls">
+      <button class="btn btn-fire"  onclick="heatRoof()">☀️ Trời nắng hè</button>
+      <button class="btn btn-cool"  onclick="coolRoof()">❄️ Trời lạnh đông</button>
+      <button class="btn btn-reset" onclick="resetRoof()">↺ Đặt lại</button>
+    </div>
+    <div class="info-box" id="roof-info">Nhấn <strong>☀️ Trời nắng hè</strong> hoặc <strong>❄️ Trời lạnh đông</strong> để so sánh khả năng cách nhiệt của mái ngói và mái tôn.</div>
+  </div>
 
 </div>
-
-<!-- ══════════ TAB 3: ĐỐI LƯU CHẤT LỎNG ══════════ -->
 <div id="tab-convection" class="section">
   <p class="sec-label">PHẦN II</p>
   <h2 class="sec-heading">Đối Lưu trong Chất Lỏng (Hình 28.2 & 28.3)</h2>
@@ -514,7 +522,7 @@ const MATERIALS = [
 ];
 let matProgress = 0, matAnimId = null;
 
-function initMat() { matProgress = 0; drawMat(0); initPan(); }
+function initMat() { matProgress = 0; drawMat(0); initPan(); initRoof(); }
 
 function heatMat() {
   cancelAnimationFrame(matAnimId);
@@ -690,6 +698,243 @@ function drawPan(p) {
     ctx.fillStyle='rgba(30,41,59,.6)'; ctx.font='10px Montserrat'; ctx.textAlign='left';
     ctx.fillText(l, lx+18, ly+i*22+10);
   });
+}
+
+// ═══════════════════════════════════════════════
+//  ROOF — Mái ngói vs Mái tôn
+// ═══════════════════════════════════════════════
+let roofMode = null, roofProgress = 0, roofAnimId = null;
+
+function initRoof() { roofMode=null; roofProgress=0; cancelAnimationFrame(roofAnimId); drawRoof(); }
+
+function heatRoof() {
+  roofMode='summer'; cancelAnimationFrame(roofAnimId);
+  document.getElementById('roof-info').innerHTML='☀️ <strong>Mùa hè:</strong> Mặt trời chiếu mạnh — ngói cách nhiệt tốt hơn, bên trong mát hơn tôn!';
+  animateRoof(1);
+}
+function coolRoof() {
+  roofMode='winter'; cancelAnimationFrame(roofAnimId);
+  document.getElementById('roof-info').innerHTML='❄️ <strong>Mùa đông:</strong> Trời lạnh — ngói giữ nhiệt tốt hơn, bên trong ấm hơn tôn!';
+  animateRoof(1);
+}
+function resetRoof() {
+  cancelAnimationFrame(roofAnimId); roofMode=null; roofProgress=0;
+  document.getElementById('roof-info').innerHTML='Nhấn <strong>☀️ Trời nắng hè</strong> hoặc <strong>❄️ Trời lạnh đông</strong> để so sánh khả năng cách nhiệt.';
+  drawRoof();
+}
+function animateRoof(target) {
+  const start=roofProgress, s0=performance.now();
+  function step(now) {
+    const t=Math.min((now-s0)/1400,1), ease=1-Math.pow(1-t,3);
+    roofProgress=start+(target-start)*ease;
+    drawRoof();
+    if(t<1) roofAnimId=requestAnimationFrame(step);
+  }
+  roofAnimId=requestAnimationFrame(step);
+}
+
+function drawRoof() {
+  const cv=document.getElementById('cv-roof');
+  if(!cv) return;
+  const W=cv.width=cv.offsetWidth, H=260; cv.height=H;
+  const ctx=cv.getContext('2d');
+  const p=roofProgress;
+
+  // Sky BG
+  const isSummer=roofMode==='summer';
+  const isWinter=roofMode==='winter';
+  const skyTop = isWinter?'#BAE6FD': isSummer?'#FEF9C3':'#E0F2FE';
+  const skyBot = isWinter?'#E0F2FE': isSummer?'#FDE68A':'#F0F9FF';
+  const skyGr=ctx.createLinearGradient(0,0,0,H*0.38);
+  skyGr.addColorStop(0,skyTop); skyGr.addColorStop(1,skyBot);
+  ctx.fillStyle=skyGr; ctx.fillRect(0,0,W,H);
+
+  // Mặt trời / tuyết
+  if(isSummer) {
+    // Mặt trời góc trên phải
+    const sx=W-55, sy=38, r=28;
+    const tf=Date.now()/1200;
+    const glow=ctx.createRadialGradient(sx,sy,0,sx,sy,r*2);
+    glow.addColorStop(0,'rgba(253,224,71,0.5)'); glow.addColorStop(1,'rgba(253,224,71,0)');
+    ctx.fillStyle=glow; ctx.beginPath(); ctx.arc(sx,sy,r*2,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#FBBF24'; ctx.beginPath(); ctx.arc(sx,sy,r,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(253,224,71,0.7)'; ctx.lineWidth=2;
+    for(let a=0;a<8;a++){
+      const ang=a*Math.PI/4+tf*0.3;
+      ctx.beginPath(); ctx.moveTo(sx+Math.cos(ang)*(r+5),sy+Math.sin(ang)*(r+5));
+      ctx.lineTo(sx+Math.cos(ang)*(r+14),sy+Math.sin(ang)*(r+14)); ctx.stroke();
+    }
+    // Tia nhiệt xuống
+    if(p>0.1) {
+      ctx.strokeStyle=`rgba(251,191,36,${p*0.4})`; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+      for(let xi=0;xi<W;xi+=W/6) {
+        ctx.beginPath(); ctx.moveTo(sx,sy+r); ctx.lineTo(xi+W/12, H*0.38); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+  } else if(isWinter) {
+    // Bông tuyết rơi
+    const flakes=[{x:0.15,y:0.08},{x:0.35,y:0.15},{x:0.6,y:0.06},{x:0.8,y:0.18},{x:0.5,y:0.22}];
+    ctx.fillStyle='rgba(186,230,253,0.9)'; ctx.font='16px sans-serif'; ctx.textAlign='center';
+    flakes.forEach(f=>ctx.fillText('❄',f.x*W,f.y*H*0.9));
+  }
+
+  // ── Hai ngôi nhà cạnh nhau ──
+  const houseW=W*0.36, houseH=80, roofH=48;
+  const gap=W*0.06;
+  const house1X=(W-2*houseW-gap)/2;   // Nhà ngói (trái)
+  const house2X=house1X+houseW+gap;   // Nhà tôn (phải)
+  const houseY=H*0.38+roofH;
+
+  // --- Hàm vẽ 1 ngôi nhà ---
+  function drawHouse(hx, isNgoi) {
+    // Tường nhà
+    const wallColor='#F8FAFC';
+    ctx.fillStyle=wallColor;
+    ctx.beginPath(); ctx.roundRect(hx, houseY, houseW, houseH, [0,0,6,6]); ctx.fill();
+    ctx.strokeStyle='#CBD5E1'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.roundRect(hx, houseY, houseW, houseH, [0,0,6,6]); ctx.stroke();
+
+    // Cửa sổ
+    const wxc=hx+houseW*0.22, wyc=houseY+houseH*0.22, ww=houseW*0.25, wh=houseH*0.38;
+    ctx.fillStyle='#BAE6FD'; ctx.beginPath(); ctx.roundRect(wxc,wyc,ww,wh,3); ctx.fill();
+    ctx.strokeStyle='#7DD3FC'; ctx.lineWidth=1; ctx.strokeRect(wxc,wyc,ww,wh);
+    ctx.strokeStyle='#7DD3FC'; ctx.lineWidth=0.8;
+    ctx.beginPath(); ctx.moveTo(wxc+ww/2,wyc); ctx.lineTo(wxc+ww/2,wyc+wh); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(wxc,wyc+wh/2); ctx.lineTo(wxc+ww,wyc+wh/2); ctx.stroke();
+
+    // Cửa ra vào
+    const dxc=hx+houseW*0.6, dyc=houseY+houseH*0.4, dw=houseW*0.22, dh=houseH*0.6;
+    ctx.fillStyle='#92400E'; ctx.beginPath(); ctx.roundRect(dxc,dyc,dw,dh,[3,3,0,0]); ctx.fill();
+    ctx.fillStyle='#D97706'; ctx.beginPath(); ctx.arc(dxc+dw*0.8,dyc+dh*0.5,3,0,Math.PI*2); ctx.fill();
+
+    // Mái nhà
+    const midX=hx+houseW/2;
+    const roofY=houseY-roofH+8;
+
+    if(isNgoi) {
+      // Mái NGÓI — màu cam đỏ, vẽ từng hàng ngói
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(hx-6, houseY);
+      ctx.lineTo(midX, roofY);
+      ctx.lineTo(hx+houseW+6, houseY);
+      ctx.closePath();
+      ctx.clip();
+
+      // Nền mái
+      const roofGr=ctx.createLinearGradient(0,roofY,0,houseY);
+      roofGr.addColorStop(0,'#B45309'); roofGr.addColorStop(1,'#D97706');
+      ctx.fillStyle=roofGr; ctx.fill();
+
+      // Hàng ngói
+      ctx.strokeStyle='rgba(0,0,0,0.12)'; ctx.lineWidth=1;
+      for(let row=0;row<5;row++){
+        const ry=roofY+(houseY-roofY)*row/5;
+        const rowW=houseW*0.9*(row/5)+10;
+        const step=rowW/Math.max(3,3+row);
+        for(let col=-1;col<=Math.ceil(rowW/step)+1;col++){
+          const rx=midX-rowW/2+col*step;
+          ctx.beginPath();
+          ctx.ellipse(rx,ry+6,step*0.52,8,0,0,Math.PI);
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+
+      // Viền mái
+      ctx.strokeStyle='#92400E'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(hx-6,houseY); ctx.lineTo(midX,roofY); ctx.lineTo(hx+houseW+6,houseY); ctx.stroke();
+
+    } else {
+      // Mái TÔN — xám kim loại, sọc ngang
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(hx-6,houseY); ctx.lineTo(midX,roofY); ctx.lineTo(hx+houseW+6,houseY);
+      ctx.closePath(); ctx.clip();
+
+      const roofGr=ctx.createLinearGradient(hx,0,hx+houseW,0);
+      roofGr.addColorStop(0,'#94A3B8'); roofGr.addColorStop(0.5,'#CBD5E1'); roofGr.addColorStop(1,'#94A3B8');
+      ctx.fillStyle=roofGr; ctx.fillRect(hx-10,roofY-5,houseW+20,houseY-roofY+15);
+
+      // Sóng tôn
+      ctx.strokeStyle='rgba(0,0,0,0.1)'; ctx.lineWidth=2;
+      const slopeL=Math.sqrt((houseW/2+6)**2+roofH**2);
+      for(let s=8;s<slopeL;s+=8){
+        const t2=s/slopeL;
+        const lx2=hx-6+t2*(midX-hx+6), ly2=houseY-t2*(houseY-roofY);
+        const rx2=hx+houseW+6-t2*(houseW+6-midX+hx), ry2=ly2;
+        ctx.beginPath(); ctx.moveTo(lx2,ly2); ctx.lineTo(rx2,ry2); ctx.stroke();
+      }
+      ctx.restore();
+
+      ctx.strokeStyle='#64748B'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(hx-6,houseY); ctx.lineTo(midX,roofY); ctx.lineTo(hx+houseW+6,houseY); ctx.stroke();
+    }
+
+    // Nhiệt kế bên trong (chỉ khi có roofMode)
+    if(roofMode && p>0.2) {
+      const tx2=hx+houseW*0.5, ty2=houseY+houseH*0.55;
+
+      // Ngôi nhà ngói mát hơn khi hè, ấm hơn khi đông
+      let innerTemp, tempColor;
+      if(isSummer===roofMode==='summer') {
+        // So sánh tương đối: ngói mát hơn
+        innerTemp = isNgoi ? lerp(0,0.35,p) : lerp(0,0.75,p);
+        tempColor = isNgoi ? '#22C55E' : '#EF4444';
+      }
+      if(isSummer===roofMode==='winter') {
+        innerTemp = isNgoi ? lerp(0,0.65,p) : lerp(0,0.28,p);
+        tempColor = isNgoi ? '#EF4444' : '#94A3B8';
+      }
+
+      // Vẽ nhiệt kế nhỏ
+      const thW=8, thH=28;
+      ctx.fillStyle='#F1F5F9'; ctx.strokeStyle='#CBD5E1'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.roundRect(tx2-thW/2,ty2-thH,thW,thH,4); ctx.fill(); ctx.stroke();
+      ctx.fillStyle=tempColor||'#94A3B8';
+      ctx.beginPath(); ctx.roundRect(tx2-thW/2+1,ty2-thH+1+thH*(1-innerTemp||0),thW-2,(thH-2)*(innerTemp||0),3); ctx.fill();
+      ctx.beginPath(); ctx.arc(tx2,ty2+4,6,0,Math.PI*2); ctx.fill();
+
+      // Nhãn nhiệt độ
+      ctx.fillStyle=tempColor||'#94A3B8'; ctx.font='bold 10px Montserrat'; ctx.textAlign='center';
+      const label = (roofMode==='summer')
+        ? (isNgoi?'Mát ✓':'Nóng ✗')
+        : (isNgoi?'Ấm ✓':'Lạnh ✗');
+      ctx.fillText(label, tx2, ty2+20);
+    }
+  }
+
+  // Vẽ 2 nhà
+  drawHouse(house1X, true);   // Mái ngói
+  drawHouse(house2X, false);  // Mái tôn
+
+  // Tên nhà
+  ctx.font='bold 13px Montserrat'; ctx.textAlign='center';
+  ctx.fillStyle='#92400E';
+  ctx.fillText('Mái NGÓI', house1X+houseW/2, houseY+houseH+20);
+  ctx.fillStyle='#475569';
+  ctx.fillText('Mái TÔN', house2X+houseW/2, houseY+houseH+20);
+
+  // Chú thích cách nhiệt
+  const barY=houseY-roofH-22;
+  if(roofMode && p>0.3) {
+    // Thanh so sánh cách nhiệt
+    const barW=houseW*0.85;
+    const ngoi_val=0.82, ton_val=0.32; // ngói cách nhiệt tốt hơn nhiều
+    [[house1X,ngoi_val,'#D97706','Cách nhiệt: tốt'],
+     [house2X,ton_val,'#94A3B8','Cách nhiệt: kém']].forEach(([bx,val,col,lbl])=>{
+      ctx.fillStyle='#E2E8F0'; ctx.beginPath(); ctx.roundRect(bx+(houseW-barW)/2, barY, barW, 8, 4); ctx.fill();
+      ctx.fillStyle=col;
+      ctx.beginPath(); ctx.roundRect(bx+(houseW-barW)/2, barY, barW*val*p, 8, 4); ctx.fill();
+      ctx.fillStyle=col; ctx.font='bold 10px Montserrat'; ctx.textAlign='center';
+      ctx.fillText(lbl, bx+houseW/2, barY-5);
+    });
+  }
+
+  // Mặt đất
+  ctx.fillStyle='#86EFAC'; ctx.beginPath(); ctx.roundRect(0, houseY+houseH, W, H-(houseY+houseH), [0,0,0,0]); ctx.fill();
+  ctx.fillStyle='#22C55E'; ctx.fillRect(0,houseY+houseH,W,4);
 }
 
 // ═══════════════════════════════════════════════
@@ -1237,6 +1482,7 @@ window.addEventListener('load', () => {
     if (document.getElementById('tab-material').classList.contains('active')) {
       drawMat(matProgress);
       drawPan(panProgress);
+      drawRoof();
     }
     requestAnimationFrame(panFlameLoop);
   }
@@ -1253,7 +1499,7 @@ window.addEventListener('load', () => {
 
 window.addEventListener('resize', () => {
   drawCond();
-  drawMat(matProgress); drawPan(panProgress);
+  drawMat(matProgress); drawPan(panProgress); drawRoof();
   ['a','b'].forEach(id=>drawTube(id,tubeStates[id].progress));
   drawConvMain(convProgress);
   drawWind(windMode?1:0);
